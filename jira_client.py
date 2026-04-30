@@ -1,15 +1,16 @@
-# jira_client.py
-
-import requests
 import streamlit as st
+import requests
 from requests.auth import HTTPBasicAuth
 
 JIRA_URL = "https://aditya2529.atlassian.net"
 
-EMAIL = st.secrets["JIRA_EMAIL"]
-API_TOKEN = st.secrets["JIRA_API_TOKEN"]
-
 def create_jira_issue(payload):
+    EMAIL = st.secrets.get("JIRA_EMAIL")
+    API_TOKEN = st.secrets.get("JIRA_API_TOKEN")
+
+    if not EMAIL or not API_TOKEN:
+        raise Exception("JIRA secrets not loaded. Check Streamlit Cloud secrets.")
+
     url = f"{JIRA_URL}/rest/api/3/issue"
 
     response = requests.post(
