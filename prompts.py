@@ -31,24 +31,28 @@ Story:
 
 def test_case_prompt(story):
     return f"""
-You are a QA expert.
+Act as a Senior QA Engineer.
 
-Generate test cases in Zephyr (Jira) format.
+Generate test cases strictly based on the user story and acceptance criteria.
 
-Each test case should include:
+STRICT RULES:
+- Cover positive, negative, and edge cases
+- Each acceptance criteria must have at least one test case
+- Include failure scenarios and system behavior validations
+- Do NOT miss constraints like retries, limits, validations, or errors
 
+FORMAT (MANDATORY):
 Test Case ID:
 Title:
 Preconditions:
 Steps:
 Expected Result:
 
-Create:
-- Positive test cases
-- Negative test cases
-- Edge cases
+IMPORTANT:
+- Ensure test cases are complete and not truncated
+- Prioritize critical flows if output length is limited
+- Do NOT introduce features not present in the input
 
-Format clearly and consistently.
 
 User Story:
 {story}
