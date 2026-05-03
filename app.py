@@ -9,6 +9,7 @@ from risk_detector import detect_risks
 from test_case_generator import generate_test_cases
 from estimation_engine import estimate_story
 from input_validator import validate_input
+from test_case_generator import split_stories
 
 # ---------- PAGE CONFIG ----------
 st.set_page_config(page_title="AI BA Copilot", layout="wide")
@@ -145,47 +146,60 @@ if mode == "Simple (One-click)":
             improved_prompt = f"""
 Act as a Senior Business Analyst.
 
-Refine the user story into production-ready Jira format.
+Convert the input into EXACTLY 2 production-ready Jira user stories.
+
+STRICTLY FOLLOW the format below. If the format is not followed, the answer is incorrect.
 
 STRICT RULES:
-- Each story must be independent
-- Use THIS structure ONLY:
 
-Title:
-As a [user],
-I want [goal],
-So that [business value]
+1. Each story must represent ONLY ONE primary workflow (do NOT combine multiple workflows).
 
-Acceptance Criteria (MANDATORY Given-When-Then):
-- At least 5 criteria
-- Must be testable and specific
-- Include success + failure + edge cases
+2. Use EXACT structure:
 
-Include:
-- Edge Cases
+- Title MUST be present and must NOT start with "As a" or "User Story"
+- Title must be a short action-oriented phrase (3–6 words)
+
+Title: <Short feature name ONLY>
+
+Description:
+As a <user>, I want <goal>, so that <business value>.
+
+Acceptance Criteria:
+- Provide EXACTLY 3 acceptance criteria
+- Each MUST STRICTLY follow format:
+  - Given <context>, When <action>, Then <result>
+- Do NOT write plain sentences without Given/When/Then
+
+3. Acceptance Criteria MUST include:
+- 1 success scenario (happy path)
+- 1 validation/failure scenario
+- 1 edge case scenario (must be DISTINCT, not another validation)
+
+4. CRITICAL QUALITY RULES:
+- Do NOT write "Given:", "When:", "Then:" on separate lines
+- Do NOT repeat the same logic in different words
+- Do NOT combine multiple actions in one AC
+- Each AC must be specific, testable, and system-behavior driven
+- Avoid vague phrases like "works correctly", "handles properly", "accurate"
+
+5. DO NOT INCLUDE:
 - Assumptions
-- Open Questions (if ambiguity exists)
+- Open Questions
+- Separate Edge Case section
+- Any explanation outside the defined structure
+- Any headings like "User Story 1" or extra commentary
 
-DO NOT:
-- Be generic
-- Combine multiple features into one story
-- Leave incomplete sections
-
-IMPORTANT:
-- Identify ALL distinct workflows from the input (e.g., validation, approval, notification, logging)
-- Create at least ONE user story per workflow (combine only if strongly related)
-- Do NOT miss any requirement from the input
-- Cover success, failure, and edge-case scenarios for each workflow
-- Include constraints like retries, limits, validations, and system behaviors where mentioned
-- Do NOT introduce features not present in the input
-- If output length is limited, reduce verbosity but still cover all workflows
-- Prefer concise acceptance criteria over verbose descriptions
-- If content is too large, generate only the first 2–3 complete user stories
-- Do NOT truncate any story mid-way
-- Ensure ALL explicit actions mentioned in input (e.g., cancel, audit, approve, reject) are converted into user stories
+6. IMPORTANT:
+- Prioritize the most important workflows from the input
+- Ensure each story is cleanly separated by workflow
+- Do NOT introduce features not present in input
+- Keep output concise, structured, and complete
+- Do NOT exceed 2 stories
+- Do NOT truncate any story
 
 User Story:
 {story}
+
 """
             final_story = generate_user_story(improved_prompt)
 
@@ -216,13 +230,17 @@ User Story:
 
             # 🚀 OPTIONAL JIRA PUSH
             if auto_push:
-                payload = map_to_jira_payload(final_story)
-                response = create_jira_issue(payload)
 
-                if response.status_code == 201:
-                    st.success(f"✅ Jira Created: {response.json().get('key')}")
-                else:
-                    st.error(response.text)
+              stories = split_stories(final_story)
+
+              for s in stories:
+                 payload = map_to_jira_payload(s)
+                 response = create_jira_issue(payload)
+
+                 if response.status_code == 201:
+                  st.success(f"✅ Created: {response.json().get('key')}")
+                 else:
+                  st.error(response.text)
 
             # ✅ SUCCESS MESSAGE
             st.success("✅ Input processed successfully")
@@ -345,14 +363,20 @@ with tab1:
 
         st.markdown("### 🚀 Push to Jira")
 
-        if st.button("🚀 Push Clean Story to Jira", disabled=not st.session_state.validation):
-            payload = map_to_jira_payload(st.session_state.story)
-            response = create_jira_issue(payload)
+    if st.button("🚀 Push Clean Story to Jira"):
 
-            if response.status_code == 201:
-                st.success(f"✅ Created: {response.json().get('key')}")
-            else:
-                st.error(response.text)
+     stories = split_stories(st.session_state.story)
+
+     for s in stories:
+        payload = map_to_jira_payload(s)
+        response = create_jira_issue(payload)
+
+        if response.status_code == 201:
+            st.success(f"✅ Created: {response.json().get('key')}")
+        else:
+            st.error(response.text)
+
+            
 
 # ---------- VALIDATION ----------
 with tab2:
@@ -501,3 +525,5 @@ User Stories:
     test_cases.append(tc2)
 
     return "\n\n".join(test_cases)
+
+

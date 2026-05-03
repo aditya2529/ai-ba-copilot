@@ -116,32 +116,57 @@ def format_description(story_text):
 
 
 def map_to_jira_payload(story_text):
+    import re
 
-    clean_summary = ""
+    # ---------- Extract Title ----------
+    title_match = re.search(r"Title:\s*(.+)", story_text)
+    title = title_match.group(1).strip() if title_match else "User Story"
 
-    for line in story_text.split("\n"):
-        line = line.strip().replace("*", "")
+    title = re.sub(r"\*\*|User Story \d+:\s*", "", title).strip()
 
-        if line.lower().startswith("title"):
-            clean_summary = line.split(":", 1)[1].strip()
-            break
+    # ---------- Extract Description ----------
+    desc_match = re.search(r"Description:\s*(.*?)(Acceptance Criteria:)", story_text, re.DOTALL)
+    description = desc_match.group(1).strip() if desc_match else ""
 
-    # fallback if Title not found
-    if not clean_summary:
-        for line in story_text.split("\n"):
-            if line.lower().startswith("as a"):
-                clean_summary = line.strip()
-                break
+    # ---------- Extract AC ----------
+    ac_match = re.search(r"Acceptance Criteria:\s*(.*)", story_text, re.DOTALL)
+    ac_text = ac_match.group(1).strip() if ac_match else ""
 
-    # final fallback
-    if not clean_summary:
-        clean_summary = story_text.replace("\n", " ")[:100]
+    ac_lines = []
+    for line in ac_text.split("\n"):
+        line = line.strip()
+        if line:
+            ac_lines.append(line)
+
+    # ---------- BUILD ADF FORMAT ----------
+    def text_block(text):
+        return {
+            "type": "paragraph",
+            "content": [{"type": "text", "text": text}]
+        }
+
+    adf_description = {
+        "type": "doc",
+        "version": 1,
+        "content": []
+    }
+
+    # Add description
+    if description:
+        adf_description["content"].append(text_block(description))
+
+    # Add AC header
+    if ac_lines:
+        adf_description["content"].append(text_block("Acceptance Criteria:"))
+
+        for ac in ac_lines:
+            adf_description["content"].append(text_block(f"• {ac}"))
 
     return {
         "fields": {
             "project": {"key": "SCRUM"},
-            "summary": clean_summary[:100],
-            "description": format_description(story_text),
+            "summary": title,
+            "description": adf_description,  # ✅ FIXED HERE
             "issuetype": {"name": "Story"}
         }
     }
