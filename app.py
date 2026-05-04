@@ -262,32 +262,44 @@ if mode == "Advanced (Step-by-step)":
         if st.button("🔄 Improve Story", disabled=not st.session_state.validation):
             with st.spinner("Improving story..."):
                 improved_prompt = f"""
-Act as a Senior Business Analyst.
+You are a Senior Business Analyst with 10 years of enterprise Agile experience.
 
-Rewrite the following into EXACTLY 2 production-ready Jira user stories.
+Rewrite the user stories below into EXACTLY 2 production-ready Jira stories.
+Use the EXAMPLE below as your quality benchmark — match its level of specificity.
 
-STRICT FORMAT — follow exactly:
+--- EXAMPLE OF A HIGH-QUALITY STORY ---
 
-Title: <Short action-oriented phrase, 3–6 words>
+Title: Extend Book Loan Before Due Date
 
 Description:
-As a <user>, I want <goal>, so that <business value>.
+As a registered library member, I want to extend my book loan online before the due date, so that I avoid late fees without needing to visit the library in person.
 
 Acceptance Criteria:
-- Given <context>, When <action>, Then <result>
-- Given <context>, When <action>, Then <result>
-- Given <context>, When <action>, Then <result>
+- Given a member has an active loan with 3 or more days remaining, When they click "Extend Loan" on the My Loans page, Then the due date is extended by 14 days and a confirmation email is sent to the member within 2 minutes.
+- Given a member has already extended the same loan once, When they attempt to click "Extend Loan" again, Then the system displays the message "Maximum extensions reached — please return or renew in person" and the Extend button is disabled.
+- Given a member has an outstanding fine greater than $5.00, When they navigate to the My Loans page, Then all Extend Loan buttons are greyed out and a banner reads "Clear your outstanding balance to re-enable loan extensions."
 
-RULES:
+--- END EXAMPLE ---
+
+QUALITY RULES:
+- Title: 3–6 words, specific and action-oriented. BAD: "Improve Checkout". GOOD: "Validate Card Fields on Submission"
+- Role: a specific named persona. BAD: "user", "customer/user". GOOD: "registered customer", "guest shopper"
+- Business value: concrete outcome. BAD: "improve experience". GOOD: "prevent failed payments from invalid card data"
+- Each AC must cover a DIFFERENT scenario — no two ACs test the same thing
+- Each AC must name the exact UI element, field name, error message, or system state
+- AC 1 = success/happy path with specific outcome
+- AC 2 = specific failure with exact error message or UI state
+- AC 3 = distinct edge case — NOT a repeat of AC 2
+
+STRICT FORMAT RULES:
 - Output EXACTLY 2 stories
-- Each story must be fully complete before the next begins
-- No "User Story 1:" headers, no extra commentary
-- Title must NOT start with "As a" or "User Story"
-- Each story must have its own separate Title, Description, and Acceptance Criteria
-- Do NOT merge or share sections across stories
-- Exactly 3 Given/When/Then criteria per story
+- Every story starts with "Title:" on its own line
+- NO bold text (**), NO "User Story 1/2:" labels
+- NO extra sections (Risks, Assumptions, Notes, Priority)
+- Complete story 1 fully before starting story 2
+- One workflow per story — do NOT merge features
 
-User Story:
+User Stories to improve:
 {st.session_state.story}
 """
                 st.session_state.story = generate_user_story(improved_prompt, raw_prompt=True)
