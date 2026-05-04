@@ -136,62 +136,45 @@ if mode == "Simple (One-click)":
 
             # ✨ Step 4: Improve story
             improved_prompt = f"""
-Act as a Senior Business Analyst.
+You are a Senior Business Analyst with 10 years of enterprise Agile experience.
 
-Convert the input into EXACTLY 2 production-ready Jira user stories.
+Rewrite the user stories below into EXACTLY 2 production-ready Jira stories.
+Use the EXAMPLE below as your quality benchmark — match its level of specificity.
 
-STRICTLY FOLLOW the format below. If the format is not followed, the answer is incorrect.
+--- EXAMPLE OF A HIGH-QUALITY STORY ---
 
-STRICT RULES:
-
-1. Each story must represent ONLY ONE primary workflow (do NOT combine multiple workflows).
-
-2. Use EXACT structure:
-
-- Title MUST be present and must NOT start with "As a" or "User Story"
-- Title must be a short action-oriented phrase (3–6 words)
-
-Title: <Short feature name ONLY>
+Title: Extend Book Loan Before Due Date
 
 Description:
-As a <user>, I want <goal>, so that <business value>.
+As a registered library member, I want to extend my book loan online before the due date, so that I avoid late fees without needing to visit the library in person.
 
 Acceptance Criteria:
-- Provide EXACTLY 3 acceptance criteria
-- Each MUST STRICTLY follow format:
-  - Given <context>, When <action>, Then <result>
-- Do NOT write plain sentences without Given/When/Then
+- Given a member has an active loan with 3 or more days remaining, When they click "Extend Loan" on the My Loans page, Then the due date is extended by 14 days and a confirmation email is sent to the member within 2 minutes.
+- Given a member has already extended the same loan once, When they attempt to click "Extend Loan" again, Then the system displays the message "Maximum extensions reached — please return or renew in person" and the Extend button is disabled.
+- Given a member has an outstanding fine greater than $5.00, When they navigate to the My Loans page, Then all Extend Loan buttons are greyed out and a banner reads "Clear your outstanding balance to re-enable loan extensions."
 
-3. Acceptance Criteria MUST include:
-- 1 success scenario (happy path)
-- 1 validation/failure scenario
-- 1 edge case scenario (must be DISTINCT, not another validation)
+--- END EXAMPLE ---
 
-4. CRITICAL QUALITY RULES:
-- Do NOT write "Given:", "When:", "Then:" on separate lines
-- Do NOT repeat the same logic in different words
-- Do NOT combine multiple actions in one AC
-- Each AC must be specific, testable, and system-behavior driven
-- Avoid vague phrases like "works correctly", "handles properly", "accurate"
+QUALITY RULES:
+- Title: 3–6 words, specific and action-oriented. BAD: "Improve Checkout". GOOD: "Validate Card Fields on Submission"
+- Role: a specific named persona. BAD: "user", "customer/user". GOOD: "registered customer", "guest shopper"
+- Business value: concrete outcome. BAD: "improve experience". GOOD: "prevent failed payments from invalid card data"
+- Each AC must cover a DIFFERENT scenario — no two ACs test the same thing
+- Each AC must name the exact UI element, field name, error message, or system state
+- AC 1 = success/happy path with specific outcome
+- AC 2 = specific failure with exact error message or UI state
+- AC 3 = distinct edge case — NOT a repeat of AC 2
 
-5. DO NOT INCLUDE:
-- Assumptions
-- Open Questions
-- Separate Edge Case section
-- Any explanation outside the defined structure
-- Any headings like "User Story 1" or extra commentary
+STRICT FORMAT RULES:
+- Output EXACTLY 2 stories
+- Every story starts with "Title:" on its own line
+- NO bold text (**), NO "User Story 1/2:" labels
+- NO extra sections (Risks, Assumptions, Notes, Priority)
+- Complete story 1 fully before starting story 2
+- One workflow per story — do NOT merge features
 
-6. IMPORTANT:
-- Prioritize the most important workflows from the input
-- Ensure each story is cleanly separated by workflow
-- Do NOT introduce features not present in input
-- Keep output concise, structured, and complete
-- Do NOT exceed 2 stories
-- Do NOT truncate any story
-
-User Story:
+User Stories to improve:
 {story}
-
 """
             final_story = generate_user_story(improved_prompt, raw_prompt=True)
 
