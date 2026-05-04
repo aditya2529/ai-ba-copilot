@@ -29,9 +29,9 @@ Instructions:
 
 - Do NOT reject the input
 - Be constructive and helpful
-- Improve the input if possible
+- ONLY clean and restructure the input — do NOT generate user stories
 
-Respond STRICTLY in the format below:
+Respond STRICTLY in this format — do not deviate:
 
 Score: X/10
 
@@ -46,7 +46,7 @@ Suggestions:
 - ...
 
 Improved Input:
-<Rewrite the meeting notes in a clearer, structured, and usable format for user story generation>
+<Rewrite the meeting notes as clear, structured requirements. Do NOT write user stories or acceptance criteria here.>
 """
 
     return call_llm(prompt)

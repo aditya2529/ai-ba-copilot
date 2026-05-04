@@ -9,7 +9,11 @@ from risk_detector import detect_risks
 from test_case_generator import generate_test_cases
 from estimation_engine import estimate_story
 from input_validator import validate_input
-from test_case_generator import split_stories
+from test_case_generator import extract_valid_stories
+
+def extract_improved_input(validation_text, fallback=""):
+    m = re.search(r"Improved Input:\s*\n(.+)", validation_text, re.DOTALL)
+    return m.group(1).strip() if m else fallback
 
 # ---------- PAGE CONFIG ----------
 st.set_page_config(page_title="AI BA Copilot", layout="wide")
@@ -69,13 +73,7 @@ def run_full_pipeline(input_text):
 
     validation = validate_input(input_text)
     result["input_validation"] = validation
-    #improved_input = input_text
-    # 🔥 Extract improved input from validation
-    improved_match = re.search(r"Improved Input:\n(.+)", validation, re.DOTALL)
-    if improved_match:
-     improved_input = improved_match.group(1).strip()
-    else:
-     improved_input = input_text
+    improved_input = extract_improved_input(validation, fallback=input_text)
 
     story = generate_user_story(improved_input)
 
@@ -126,13 +124,7 @@ if mode == "Simple (One-click)":
                 validation = validate_input(meeting_notes)
 
             # 🔍 Step 2: Extract improved input
-            improved_match = re.search(r"Improved Input:\n(.+)", validation, re.DOTALL)
-
-            if improved_match:
-                improved_input = improved_match.group(1).strip()
-            else:
-                improved_input = meeting_notes
-                # 👇 ADD RIGHT HERE
+            improved_input = extract_improved_input(validation, fallback=meeting_notes)
             st.info("ℹ️ Your input was automatically refined to improve clarity before generating the story.")
 
             with st.expander("✨ Improved Input (AI Cleaned)"):
@@ -201,7 +193,7 @@ User Story:
 {story}
 
 """
-            final_story = generate_user_story(improved_prompt)
+            final_story = generate_user_story(improved_prompt, raw_prompt=True)
 
             # ⚙️ Step 5: Remaining pipeline
             with st.spinner("⚙️ Running validations, risks, and test cases..."):
@@ -230,17 +222,22 @@ User Story:
 
             # 🚀 OPTIONAL JIRA PUSH
             if auto_push:
-
-              stories = split_stories(final_story)
-
-              for s in stories:
-                 payload = map_to_jira_payload(s)
-                 response = create_jira_issue(payload)
-
-                 if response.status_code == 201:
-                  st.success(f"✅ Created: {response.json().get('key')}")
-                 else:
-                  st.error(response.text)
+                stories = extract_valid_stories(final_story)
+                if len(stories) < 2:
+                    st.error(f"❌ Jira push aborted: only {len(stories)} valid story/stories extracted (need 2).")
+                    for i, s in enumerate(stories):
+                        st.code(f"[DEBUG] Story {i+1}:\n{s[:300]}", language=None)
+                else:
+                    for s in stories:
+                        try:
+                            payload = map_to_jira_payload(s)
+                            response = create_jira_issue(payload)
+                            if response.status_code == 201:
+                                st.success(f"✅ Created: {response.json().get('key')}")
+                            else:
+                                st.error(response.text)
+                        except ValueError as e:
+                            st.error(f"⚠️ Skipped invalid story: {e}")
 
             # ✅ SUCCESS MESSAGE
             st.success("✅ Input processed successfully")
@@ -270,7 +267,8 @@ if mode == "Advanced (Step-by-step)":
     with c2:
         if st.button("🧾 Generate", disabled=not st.session_state.input_validation):
             with st.spinner("Generating..."):
-                st.session_state.story = generate_user_story(meeting_notes)
+                gen_input = extract_improved_input(st.session_state.input_validation, fallback=meeting_notes)
+                st.session_state.story = generate_user_story(gen_input)
 
     with c3:
         if st.button("✅ Validate Story", disabled=not st.session_state.story):
@@ -280,18 +278,41 @@ if mode == "Advanced (Step-by-step)":
     with c4:
         if st.button("🔄 Improve Story", disabled=not st.session_state.validation):
             with st.spinner("Improving story..."):
-                #improved_prompt = st.session_state.story + "\n\nImprove clarity, structure and acceptance criteria."
                 improved_prompt = f"""
-Refine the following user story for:
-- clarity
-- proper structure
-- INVEST principles
-- strong acceptance criteria
+Act as a Senior Business Analyst.
+
+Rewrite the following into EXACTLY 2 production-ready Jira user stories.
+
+STRICT FORMAT — follow exactly:
+
+Title: <Short action-oriented phrase, 3–6 words>
+
+Description:
+As a <user>, I want <goal>, so that <business value>.
+
+Acceptance Criteria:
+- Given <context>, When <action>, Then <result>
+- Given <context>, When <action>, Then <result>
+- Given <context>, When <action>, Then <result>
+
+RULES:
+- Output EXACTLY 2 stories
+- Each story must be fully complete before the next begins
+- No "User Story 1:" headers, no extra commentary
+- Title must NOT start with "As a" or "User Story"
+- Each story must have its own separate Title, Description, and Acceptance Criteria
+- Do NOT merge or share sections across stories
+- Exactly 3 Given/When/Then criteria per story
 
 User Story:
 {st.session_state.story}
 """
-                st.session_state.story = generate_user_story(improved_prompt)
+                st.session_state.story = generate_user_story(improved_prompt, raw_prompt=True)
+                # Clear only results based on the old story; keep validation so other buttons stay enabled
+                st.session_state.risks = None
+                st.session_state.test_cases = None
+                st.session_state.estimation = None
+            st.success("✅ Story improved. Scroll down to see updated output.")
 
     with c5:
         if st.button("⚠️ Risks", disabled=not st.session_state.validation):
@@ -328,9 +349,7 @@ if mode == "Advanced (Step-by-step)":
 st.markdown("### 📊 Output Preview of User Story")
 
 if st.session_state.get("story"):
-    st.markdown(f"""
-    <div class="card">{st.session_state.story}</div>
-    """, unsafe_allow_html=True)
+    st.code(st.session_state.story, language=None)
 else:
     st.info("👉 Generated story will appear here instantly")
 
@@ -344,11 +363,9 @@ with tab0:
     if st.session_state.input_validation:
         st.code(st.session_state.input_validation)
 
-        improved_match = re.search(r"Improved Input:\n(.+)", st.session_state.input_validation, re.DOTALL)
+        improved_input = extract_improved_input(st.session_state.input_validation)
 
-        if improved_match:
-            improved_input = improved_match.group(1).strip()
-
+        if improved_input:
             st.markdown("### ✨ Suggested Improved Input")
             st.markdown(f'<div class="card">{improved_input}</div>', unsafe_allow_html=True)
 
@@ -360,23 +377,25 @@ with tab0:
 with tab1:
     if st.session_state.story:
         st.code(st.session_state.story)
-
         st.markdown("### 🚀 Push to Jira")
+        if st.button("🚀 Push Clean Story to Jira"):
+            stories = extract_valid_stories(st.session_state.story)
+            if len(stories) < 2:
+                st.error(f"❌ Jira push aborted: only {len(stories)} valid story/stories extracted (need 2).")
+                for i, s in enumerate(stories):
+                    st.code(f"[DEBUG] Story {i+1}:\n{s[:300]}", language=None)
+            else:
+                for s in stories:
+                    try:
+                        payload = map_to_jira_payload(s)
+                        response = create_jira_issue(payload)
+                        if response.status_code == 201:
+                            st.success(f"✅ Created: {response.json().get('key')}")
+                        else:
+                            st.error(response.text)
+                    except ValueError as e:
+                        st.error(f"⚠️ Skipped: {e}")
 
-    if st.button("🚀 Push Clean Story to Jira"):
-
-     stories = split_stories(st.session_state.story)
-
-     for s in stories:
-        payload = map_to_jira_payload(s)
-        response = create_jira_issue(payload)
-
-        if response.status_code == 201:
-            st.success(f"✅ Created: {response.json().get('key')}")
-        else:
-            st.error(response.text)
-
-            
 
 # ---------- VALIDATION ----------
 with tab2:

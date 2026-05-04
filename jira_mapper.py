@@ -118,6 +118,9 @@ def format_description(story_text):
 def map_to_jira_payload(story_text):
     import re
 
+    if not story_text or "Title:" not in story_text or "Acceptance Criteria:" not in story_text:
+        raise ValueError(f"Invalid story — missing required sections: {str(story_text)[:100]}")
+
     # ---------- Extract Title ----------
     title_match = re.search(r"Title:\s*(.+)", story_text)
     title = title_match.group(1).strip() if title_match else "User Story"

@@ -1,13 +1,31 @@
 def story_prompt(notes):
-    return f"""
-You are a seasoned Lead Business Analyst.
-Convert notes into user story.
+    return f"""You are a Senior Business Analyst.
 
-Title:
+Generate EXACTLY 2 Jira-ready user stories from the input below.
+
+OUTPUT FORMAT — copy this structure exactly, twice:
+
+Title: <short action-oriented feature name, 3-6 words>
+
 Description:
-Acceptance Criteria:
+As a <user>, I want <goal>, so that <business value>.
 
-Notes:
+Acceptance Criteria:
+- Given <context>, When <action>, Then <result>
+- Given <context>, When <action>, Then <result>
+- Given <context>, When <action>, Then <result>
+
+STRICT RULES:
+- Output EXACTLY 2 stories — no more, no less
+- Every story MUST start with "Title:" on its own line
+- NO bold text (**), NO "User Story 1:" or "User Story 2:" labels
+- NO extra sections — do not add Risks, Priority, Effort, Assumptions, or Open Questions
+- Complete story 1 fully before starting story 2
+- Title must NOT start with "As a" or "User Story"
+- Exactly 3 Given/When/Then acceptance criteria per story
+- Do NOT merge content between stories
+
+Input:
 {notes}
 """
 
