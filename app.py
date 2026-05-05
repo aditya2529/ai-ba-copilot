@@ -10,6 +10,7 @@ from test_case_generator import generate_test_cases
 from estimation_engine import estimate_story
 from input_validator import validate_input
 from test_case_generator import extract_valid_stories
+from history import load_history, save_to_history
 
 def extract_improved_input(validation_text, fallback=""):
     m = re.search(r"Improved Input:\s*\n(.+)", validation_text, re.DOTALL)
@@ -49,6 +50,38 @@ if "meeting_notes" not in st.session_state:
 if "apply_improved" in st.session_state and st.session_state.apply_improved:
     st.session_state.meeting_notes = st.session_state.apply_improved
     st.session_state.apply_improved = None
+
+# ---------- SIDEBAR HISTORY ----------
+with st.sidebar:
+    st.markdown("## 🕐 History")
+    st.caption("Your past story generations")
+
+    history = load_history()
+
+    if not history:
+        st.info("No history yet.\nGenerate your first story to see it here.")
+    else:
+        if st.button("🗑️ Clear All History", use_container_width=True):
+            import os
+            from history import HISTORY_FILE
+            if os.path.exists(HISTORY_FILE):
+                os.remove(HISTORY_FILE)
+            st.rerun()
+
+        for entry in history:
+            with st.expander(f"🗂️ {entry['timestamp']} · {entry['mode'].split()[0]}"):
+                st.caption(f"📝 {entry['input_preview']}")
+                for title in entry.get("story_titles", []):
+                    st.markdown(f"• {title}")
+                if st.button("Load this session", key=f"load_{entry['id']}"):
+                    st.session_state.meeting_notes  = entry["meeting_notes"]
+                    st.session_state.story          = entry["story"]
+                    st.session_state.input_validation = None
+                    st.session_state.validation     = entry.get("validation")
+                    st.session_state.risks          = entry.get("risks")
+                    st.session_state.test_cases     = entry.get("test_cases")
+                    st.session_state.estimation     = entry.get("estimation")
+                    st.rerun()
 
 # ---------- HEADER ----------
 st.markdown("""
@@ -134,11 +167,11 @@ if mode == "Simple (One-click)":
             with st.spinner("🧠 Generating user story..."):
                 story = generate_user_story(improved_input)
 
-            # ✨ Step 4: Improve story
+            # ✨ Step 4: Generate high-quality stories from cleaned requirements
             improved_prompt = f"""
 You are a Senior Business Analyst with 10 years of enterprise Agile experience.
 
-Rewrite the user stories below into EXACTLY 2 production-ready Jira stories.
+Generate EXACTLY 2 production-ready Jira stories from the requirements at the bottom.
 Use the EXAMPLE below as your quality benchmark — match its level of specificity.
 
 --- EXAMPLE OF A HIGH-QUALITY STORY ---
@@ -173,8 +206,8 @@ STRICT FORMAT RULES:
 - Complete story 1 fully before starting story 2
 - One workflow per story — do NOT merge features
 
-User Stories to improve:
-{story}
+Requirements to convert into 2 production-ready user stories:
+{improved_input}
 """
             final_story = generate_user_story(improved_prompt, raw_prompt=True)
 
@@ -202,6 +235,17 @@ User Stories to improve:
             st.session_state.risks = output["risks"]
             st.session_state.test_cases = output["test_cases"]
             st.session_state.estimation = output["estimation"]
+
+            # 💾 SAVE TO HISTORY
+            save_to_history(
+                mode="Simple",
+                meeting_notes=meeting_notes,
+                story=output["story"],
+                validation=output["validation"],
+                risks=output["risks"],
+                test_cases=output["test_cases"],
+                estimation=output["estimation"],
+            )
 
             # 🚀 OPTIONAL JIRA PUSH
             if auto_push:
@@ -252,6 +296,7 @@ if mode == "Advanced (Step-by-step)":
             with st.spinner("Generating..."):
                 gen_input = extract_improved_input(st.session_state.input_validation, fallback=meeting_notes)
                 st.session_state.story = generate_user_story(gen_input)
+                save_to_history(mode="Advanced", meeting_notes=meeting_notes, story=st.session_state.story)
 
     with c3:
         if st.button("✅ Validate Story", disabled=not st.session_state.story):
@@ -307,6 +352,7 @@ User Stories to improve:
                 st.session_state.risks = None
                 st.session_state.test_cases = None
                 st.session_state.estimation = None
+                save_to_history(mode="Advanced", meeting_notes=meeting_notes, story=st.session_state.story)
             st.success("✅ Story improved. Scroll down to see updated output.")
 
     with c5:
