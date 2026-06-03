@@ -261,6 +261,12 @@ Requirements to convert into 2 production-ready user stories:
                             response = create_jira_issue(payload)
                             if response.status_code == 201:
                                 st.success(f"✅ Created: {response.json().get('key')}")
+                                # Approved by push → feed this story into the RAG corpus
+                                try:
+                                    from rag.ingest import add_pushed_story
+                                    add_pushed_story(s, mode="Simple")
+                                except Exception:
+                                    pass
                             else:
                                 st.error(response.text)
                         except ValueError as e:
@@ -432,6 +438,12 @@ with tab1:
                         response = create_jira_issue(payload)
                         if response.status_code == 201:
                             st.success(f"✅ Created: {response.json().get('key')}")
+                            # Approved by push → feed this story into the RAG corpus
+                            try:
+                                from rag.ingest import add_pushed_story
+                                add_pushed_story(s, mode="Advanced")
+                            except Exception:
+                                pass
                         else:
                             st.error(response.text)
                     except ValueError as e:

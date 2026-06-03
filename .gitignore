@@ -2,3 +2,16 @@
 venv/
 __pycache__/
 .streamlit/secrets.toml
+
+# RAG local artifacts
+chroma_db/
+*.sqlite3
+
+# Claude Code internal session data
+.claude/
+
+# Local logs
+app.log
+
+# Local generated data (not for public repo)
+history.json

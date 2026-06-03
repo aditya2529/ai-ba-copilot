@@ -17,9 +17,15 @@ def _normalize_story(text):
     text = re.sub(r"^(?!Title:[ \t])(.+)\n\n?(?=Description:)", r"Title: \1\n\n", text, flags=re.MULTILINE)
     return text.strip()
 
-def generate_user_story(meeting_notes, raw_prompt=False):
+def generate_user_story(meeting_notes, raw_prompt=False, similar_stories=None):
+    """Generate user stories.
+
+    similar_stories: optional context block (from rag.retriever.retrieve_context)
+    that makes the output match your org's terminology and patterns. Default
+    None keeps existing behaviour unchanged.
+    """
     if raw_prompt:
         result = call_llm(meeting_notes)
     else:
-        result = call_llm(story_prompt(meeting_notes))
+        result = call_llm(story_prompt(meeting_notes, similar_stories=similar_stories))
     return _normalize_story(result)

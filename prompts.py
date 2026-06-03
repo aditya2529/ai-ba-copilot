@@ -1,8 +1,31 @@
-def story_prompt(notes):
+def story_prompt(notes, similar_stories=None):
+    """Build the story-generation prompt.
+
+    If `similar_stories` is provided (non-empty string), a context block of
+    real past stories from the org is injected BEFORE the Input section so
+    the model picks up your team's terminology, AC patterns, and conventions.
+
+    Default (similar_stories=None) preserves the original prompt verbatim —
+    existing Simple Mode / Advanced Mode callers are unaffected.
+    """
+    rag_block = ""
+    if similar_stories and similar_stories.strip():
+        rag_block = f"""
+--- SIMILAR PAST STORIES FROM YOUR ORG (use these as style/terminology reference, NOT as content to copy) ---
+
+{similar_stories.strip()}
+
+--- END SIMILAR PAST STORIES ---
+
+When writing the new stories below, match the tone, terminology, role
+names, system references and AC style used in the examples above. Do NOT
+copy their content — use them only as a style guide for YOUR team's voice.
+"""
+
     return f"""You are a Senior Business Analyst with 10 years of enterprise Agile experience.
 
 Generate EXACTLY 2 Jira-ready user stories from the Input section at the bottom.
-
+{rag_block}
 --- EXAMPLE OF A HIGH-QUALITY STORY (follow this standard exactly) ---
 
 Title: Extend Book Loan Before Due Date

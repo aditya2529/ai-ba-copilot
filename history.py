@@ -40,4 +40,10 @@ def save_to_history(mode, meeting_notes, story, validation=None, risks=None, tes
             json.dump(history, f, indent=2, ensure_ascii=False)
     except Exception:
         pass
+
+    # NOTE: We deliberately do NOT auto-ingest every generated story into the
+    # RAG corpus here. Only stories the user APPROVES by pushing to Jira are
+    # added to the AI's memory (see rag.ingest.add_pushed_story, called from the
+    # Jira-push handlers). This keeps the corpus free of rejected drafts.
+
     return entry

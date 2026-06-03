@@ -1,3 +1,10 @@
 streamlit
 groq
 python-dotenv
+requests
+
+# RAG dependencies
+chromadb
+sentence-transformers
+pypdf
+python-docx
