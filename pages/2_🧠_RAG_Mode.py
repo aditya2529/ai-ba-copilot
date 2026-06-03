@@ -209,9 +209,64 @@ if st.button("🚀 Generate (RAG-augmented)", key="rag_generate_btn"):
         else:
             st.info(f"ℹ️ No matches strong enough at strictness {strictness:.2f} — generating without RAG context. Try raising the slider.")
 
-        # 3. Generate story (with RAG context)
-        with st.spinner("✍️ Generating user stories..."):
-            story = generate_user_story(improved_input, similar_stories=context or None)
+        # 3a. Generate first draft (with RAG context) — same as Simple Mode step 3
+        with st.spinner("✍️ Generating first draft..."):
+            draft = generate_user_story(improved_input, similar_stories=context or None)
+
+        # 3b. Improve pass — same hardened prompt as Simple Mode, with org context
+        #     injected so BOTH passes stay in your team's voice.
+        org_context_block = ""
+        if context:
+            org_context_block = f"""
+--- SIMILAR PAST STORIES FROM YOUR ORG (match this terminology and style) ---
+
+{context}
+
+--- END SIMILAR PAST STORIES ---
+"""
+        improved_prompt = f"""
+You are a Senior Business Analyst with 10 years of enterprise Agile experience.
+
+Generate EXACTLY 2 production-ready Jira stories from the requirements at the bottom.
+Use the EXAMPLE below as your quality benchmark — match its level of specificity.
+{org_context_block}
+--- EXAMPLE OF A HIGH-QUALITY STORY ---
+
+Title: Extend Book Loan Before Due Date
+
+Description:
+As a registered library member, I want to extend my book loan online before the due date, so that I avoid late fees without needing to visit the library in person.
+
+Acceptance Criteria:
+- Given a member has an active loan with 3 or more days remaining, When they click "Extend Loan" on the My Loans page, Then the due date is extended by 14 days and a confirmation email is sent to the member within 2 minutes.
+- Given a member has already extended the same loan once, When they attempt to click "Extend Loan" again, Then the system displays the message "Maximum extensions reached — please return or renew in person" and the Extend button is disabled.
+- Given a member has an outstanding fine greater than $5.00, When they navigate to the My Loans page, Then all Extend Loan buttons are greyed out and a banner reads "Clear your outstanding balance to re-enable loan extensions."
+
+--- END EXAMPLE ---
+
+QUALITY RULES:
+- Title: 3–6 words, specific and action-oriented. BAD: "Improve Checkout". GOOD: "Validate Card Fields on Submission"
+- Role: a specific named persona. BAD: "user", "customer/user". GOOD: "registered customer", "guest shopper"
+- Business value: concrete outcome. BAD: "improve experience". GOOD: "prevent failed payments from invalid card data"
+- Each AC must cover a DIFFERENT scenario — no two ACs test the same thing
+- Each AC must name the exact UI element, field name, error message, or system state
+- AC 1 = success/happy path with specific outcome
+- AC 2 = specific failure with exact error message or UI state
+- AC 3 = distinct edge case — NOT a repeat of AC 2
+
+STRICT FORMAT RULES:
+- Output EXACTLY 2 stories
+- Every story starts with "Title:" on its own line
+- NO bold text (**), NO "User Story 1/2:" labels
+- NO extra sections (Risks, Assumptions, Notes, Priority)
+- Complete story 1 fully before starting story 2
+- One workflow per story — do NOT merge features
+
+Requirements to convert into 2 production-ready user stories:
+{improved_input}
+"""
+        with st.spinner("✨ Improving stories (your team's voice)..."):
+            story = generate_user_story(improved_prompt, raw_prompt=True)
         st.session_state.rag_story = story
 
         # 4. Full downstream pipeline
