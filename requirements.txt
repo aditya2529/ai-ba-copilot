@@ -8,3 +8,6 @@ chromadb
 sentence-transformers
 pypdf
 python-docx
+
+# MCP server (Phase 3 — agent integration)
+mcp

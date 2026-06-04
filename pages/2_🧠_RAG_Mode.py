@@ -32,6 +32,82 @@ def extract_improved_input(validation_text, fallback=""):
     return m.group(1).strip() if m else fallback
 
 
+def _retrieve_ctx(text, strictness):
+    """Retrieve org context for the given text, respecting the strictness slider."""
+    try:
+        return rag_retriever.retrieve_context(text, k=3, max_distance=strictness)
+    except Exception as e:
+        st.warning(f"Retrieval failed, continuing without RAG context: {e}")
+        return ""
+
+
+def _build_improve_prompt(improved_input, context):
+    """Hardened 2-story prompt (same as Simple Mode) with optional org context.
+
+    Single source of truth used by BOTH Simple and Advanced RAG flows so they
+    can never drift apart.
+    """
+    org_context_block = ""
+    if context:
+        org_context_block = f"""
+--- SIMILAR PAST STORIES FROM YOUR ORG (match this terminology and style) ---
+
+{context}
+
+--- END SIMILAR PAST STORIES ---
+"""
+    return f"""
+You are a Senior Business Analyst with 10 years of enterprise Agile experience.
+
+Generate EXACTLY 2 production-ready Jira stories from the requirements at the bottom.
+Use the EXAMPLE below as your quality benchmark — match its level of specificity.
+{org_context_block}
+--- EXAMPLE OF A HIGH-QUALITY STORY ---
+
+Title: Extend Book Loan Before Due Date
+
+Description:
+As a registered library member, I want to extend my book loan online before the due date, so that I avoid late fees without needing to visit the library in person.
+
+Acceptance Criteria:
+- Given a member has an active loan with 3 or more days remaining, When they click "Extend Loan" on the My Loans page, Then the due date is extended by 14 days and a confirmation email is sent to the member within 2 minutes.
+- Given a member has already extended the same loan once, When they attempt to click "Extend Loan" again, Then the system displays the message "Maximum extensions reached — please return or renew in person" and the Extend button is disabled.
+- Given a member has an outstanding fine greater than $5.00, When they navigate to the My Loans page, Then all Extend Loan buttons are greyed out and a banner reads "Clear your outstanding balance to re-enable loan extensions."
+
+--- END EXAMPLE ---
+
+QUALITY RULES:
+- Title: 3–6 words, specific and action-oriented. BAD: "Improve Checkout". GOOD: "Validate Card Fields on Submission"
+- Role: a specific named persona. BAD: "user", "customer/user". GOOD: "registered customer", "guest shopper"
+- Business value: concrete outcome. BAD: "improve experience". GOOD: "prevent failed payments from invalid card data"
+- Each AC must cover a DIFFERENT scenario — no two ACs test the same thing
+- Each AC must name the exact UI element, field name, error message, or system state
+- AC 1 = success/happy path with specific outcome
+- AC 2 = specific failure with exact error message or UI state
+- AC 3 = distinct edge case — NOT a repeat of AC 2
+
+STRICT FORMAT RULES:
+- Output EXACTLY 2 stories
+- Every story starts with "Title:" on its own line
+- NO bold text (**), NO "User Story 1/2:" labels
+- NO extra sections (Risks, Assumptions, Notes, Priority)
+- Complete story 1 fully before starting story 2
+- One workflow per story — do NOT merge features
+
+Requirements to convert into 2 production-ready user stories:
+{improved_input}
+"""
+
+
+def _generate_rag_story(improved_input, context):
+    """Two-pass generation (draft -> improve), both passes RAG-aware."""
+    # Pass 1: draft with context
+    generate_user_story(improved_input, similar_stories=context or None)
+    # Pass 2: improve with the hardened prompt + context
+    prompt = _build_improve_prompt(improved_input, context)
+    return generate_user_story(prompt, raw_prompt=True)
+
+
 def _render_corpus_status():
     try:
         counts = rag_store.count()
@@ -139,6 +215,18 @@ with st.expander("⚙️ Manage Corpus (add sources)", expanded=(counts is not N
 st.markdown("### 📝 Input")
 meeting_notes = st.text_area("Paste meeting notes or requirements", key="rag_meeting_notes", height=180)
 
+# Mode toggle — same two modes as the main app, but RAG-powered.
+rag_mode = st.radio(
+    "Choose Mode",
+    ["Simple (One-click)", "Advanced (Step-by-step)"],
+    key="rag_mode_choice",
+    horizontal=True,
+)
+if rag_mode == "Simple (One-click)":
+    st.info("⚡ Simple: validate → generate → improve → risks → tests → estimate, all in one click — every step RAG-aware.")
+else:
+    st.info("⚙️ Advanced: run each step yourself (Validate → Generate → Validate Story → Improve → Risks → Tests → Estimate) — all RAG-aware.")
+
 # Match-strictness control: lower threshold = only very-similar stories are used.
 strictness = st.slider(
     "🎚️ Match strictness — how similar a past story must be to be used as context",
@@ -180,114 +268,125 @@ if meeting_notes and meeting_notes.strip():
                 st.code((m.get("text") or "")[:600] + ("..." if len(m.get("text") or "") > 600 else ""))
 
 
-# ─── GENERATE ─────────────────────────────────────────────────────────────
+# ─── SIMPLE MODE (one-click) ──────────────────────────────────────────────
 
-if st.button("🚀 Generate (RAG-augmented)", key="rag_generate_btn"):
-    if not meeting_notes.strip():
-        st.warning("Please enter input first.")
-    else:
-        # 1. Input validation
-        with st.spinner("🔍 Validating input..."):
-            input_validation = validate_input(meeting_notes)
-        improved_input = extract_improved_input(input_validation, fallback=meeting_notes)
-        st.session_state.rag_input_validation = input_validation
-
-        with st.expander("✨ Improved Input (AI Cleaned)"):
-            st.code(improved_input)
-
-        # 2. Retrieve context (respecting the strictness slider)
-        with st.spinner("🧠 Retrieving similar past stories..."):
-            try:
-                context = rag_retriever.retrieve_context(improved_input, k=3, max_distance=strictness)
-            except Exception as e:
-                st.warning(f"Retrieval failed, falling back to non-RAG: {e}")
-                context = ""
-        st.session_state.rag_retrieved_preview = context
-
-        if context:
-            st.success(f"📚 Retrieved org context (strictness {strictness:.2f}) — generating in your team's voice.")
+if rag_mode == "Simple (One-click)":
+    if st.button("🚀 Generate Everything (RAG-augmented)", key="rag_generate_btn"):
+        if not meeting_notes.strip():
+            st.warning("Please enter input first.")
         else:
-            st.info(f"ℹ️ No matches strong enough at strictness {strictness:.2f} — generating without RAG context. Try raising the slider.")
+            # 1. Input validation
+            with st.spinner("🔍 Validating input..."):
+                input_validation = validate_input(meeting_notes)
+            improved_input = extract_improved_input(input_validation, fallback=meeting_notes)
+            st.session_state.rag_input_validation = input_validation
 
-        # 3a. Generate first draft (with RAG context) — same as Simple Mode step 3
-        with st.spinner("✍️ Generating first draft..."):
-            draft = generate_user_story(improved_input, similar_stories=context or None)
+            with st.expander("✨ Improved Input (AI Cleaned)"):
+                st.code(improved_input)
 
-        # 3b. Improve pass — same hardened prompt as Simple Mode, with org context
-        #     injected so BOTH passes stay in your team's voice.
-        org_context_block = ""
-        if context:
-            org_context_block = f"""
---- SIMILAR PAST STORIES FROM YOUR ORG (match this terminology and style) ---
+            # 2. Retrieve context (respecting the strictness slider)
+            with st.spinner("🧠 Retrieving similar past stories..."):
+                context = _retrieve_ctx(improved_input, strictness)
+            st.session_state.rag_retrieved_preview = context
 
-{context}
+            if context:
+                st.success(f"📚 Retrieved org context (strictness {strictness:.2f}) — generating in your team's voice.")
+            else:
+                st.info(f"ℹ️ No matches strong enough at strictness {strictness:.2f} — generating without RAG context. Try raising the slider.")
 
---- END SIMILAR PAST STORIES ---
-"""
-        improved_prompt = f"""
-You are a Senior Business Analyst with 10 years of enterprise Agile experience.
+            # 3. Two-pass generate (draft -> improve), both RAG-aware
+            with st.spinner("✍️ Generating & improving stories..."):
+                story = _generate_rag_story(improved_input, context)
+            st.session_state.rag_story = story
 
-Generate EXACTLY 2 production-ready Jira stories from the requirements at the bottom.
-Use the EXAMPLE below as your quality benchmark — match its level of specificity.
-{org_context_block}
---- EXAMPLE OF A HIGH-QUALITY STORY ---
+            # 4. Full downstream pipeline
+            with st.spinner("⚙️ Running validation, risks, tests, estimation..."):
+                st.session_state.rag_validation = validate_story(story)
+                st.session_state.rag_risks = detect_risks(story)
+                st.session_state.rag_test_cases = generate_test_cases(story)
+                st.session_state.rag_estimation = estimate_story(story)
 
-Title: Extend Book Loan Before Due Date
+            # 5. Save to local history (corpus grows only on Jira push)
+            save_to_history(
+                mode="RAG-Simple",
+                meeting_notes=meeting_notes,
+                story=story,
+                validation=st.session_state.rag_validation,
+                risks=st.session_state.rag_risks,
+                test_cases=st.session_state.rag_test_cases,
+                estimation=st.session_state.rag_estimation,
+            )
 
-Description:
-As a registered library member, I want to extend my book loan online before the due date, so that I avoid late fees without needing to visit the library in person.
+            st.success("✅ Done. Scroll down for outputs.")
 
-Acceptance Criteria:
-- Given a member has an active loan with 3 or more days remaining, When they click "Extend Loan" on the My Loans page, Then the due date is extended by 14 days and a confirmation email is sent to the member within 2 minutes.
-- Given a member has already extended the same loan once, When they attempt to click "Extend Loan" again, Then the system displays the message "Maximum extensions reached — please return or renew in person" and the Extend button is disabled.
-- Given a member has an outstanding fine greater than $5.00, When they navigate to the My Loans page, Then all Extend Loan buttons are greyed out and a banner reads "Clear your outstanding balance to re-enable loan extensions."
 
---- END EXAMPLE ---
+# ─── ADVANCED MODE (step-by-step) ─────────────────────────────────────────
 
-QUALITY RULES:
-- Title: 3–6 words, specific and action-oriented. BAD: "Improve Checkout". GOOD: "Validate Card Fields on Submission"
-- Role: a specific named persona. BAD: "user", "customer/user". GOOD: "registered customer", "guest shopper"
-- Business value: concrete outcome. BAD: "improve experience". GOOD: "prevent failed payments from invalid card data"
-- Each AC must cover a DIFFERENT scenario — no two ACs test the same thing
-- Each AC must name the exact UI element, field name, error message, or system state
-- AC 1 = success/happy path with specific outcome
-- AC 2 = specific failure with exact error message or UI state
-- AC 3 = distinct edge case — NOT a repeat of AC 2
+else:
+    st.markdown("### ⚙️ Actions")
+    a1, a2, a3, a4, a5, a6 = st.columns(6)
 
-STRICT FORMAT RULES:
-- Output EXACTLY 2 stories
-- Every story starts with "Title:" on its own line
-- NO bold text (**), NO "User Story 1/2:" labels
-- NO extra sections (Risks, Assumptions, Notes, Priority)
-- Complete story 1 fully before starting story 2
-- One workflow per story — do NOT merge features
+    with a1:
+        if st.button("🧠 Validate Input", key="rag_adv_validate_input"):
+            if not meeting_notes.strip():
+                st.warning("Enter input first.")
+            else:
+                with st.spinner("Validating..."):
+                    st.session_state.rag_input_validation = validate_input(meeting_notes)
 
-Requirements to convert into 2 production-ready user stories:
-{improved_input}
-"""
-        with st.spinner("✨ Improving stories (your team's voice)..."):
-            story = generate_user_story(improved_prompt, raw_prompt=True)
-        st.session_state.rag_story = story
+    with a2:
+        if st.button("🧾 Generate", key="rag_adv_generate", disabled=not st.session_state.rag_input_validation):
+            with st.spinner("Retrieving context + generating..."):
+                gen_input = extract_improved_input(st.session_state.rag_input_validation, fallback=meeting_notes)
+                context = _retrieve_ctx(gen_input, strictness)
+                st.session_state.rag_retrieved_preview = context
+                st.session_state.rag_story = _generate_rag_story(gen_input, context)
+            if context:
+                st.success(f"📚 Generated using org context (strictness {strictness:.2f}).")
+            else:
+                st.info("ℹ️ No strong matches — generated without RAG context.")
 
-        # 4. Full downstream pipeline
-        with st.spinner("⚙️ Running validation, risks, tests, estimation..."):
-            st.session_state.rag_validation = validate_story(story)
-            st.session_state.rag_risks = detect_risks(story)
-            st.session_state.rag_test_cases = generate_test_cases(story)
-            st.session_state.rag_estimation = estimate_story(story)
+    with a3:
+        if st.button("✅ Validate Story", key="rag_adv_validate_story", disabled=not st.session_state.rag_story):
+            with st.spinner("Validating story..."):
+                st.session_state.rag_validation = validate_story(st.session_state.rag_story)
 
-        # 5. Save to history (auto-feeds back into corpus via history.py hook)
-        save_to_history(
-            mode="RAG",
-            meeting_notes=meeting_notes,
-            story=story,
-            validation=st.session_state.rag_validation,
-            risks=st.session_state.rag_risks,
-            test_cases=st.session_state.rag_test_cases,
-            estimation=st.session_state.rag_estimation,
-        )
+    with a4:
+        if st.button("🔄 Improve Story", key="rag_adv_improve", disabled=not st.session_state.rag_validation):
+            with st.spinner("Improving (your team's voice)..."):
+                gen_input = extract_improved_input(st.session_state.rag_input_validation, fallback=meeting_notes)
+                context = _retrieve_ctx(gen_input, strictness)
+                st.session_state.rag_retrieved_preview = context
+                st.session_state.rag_story = _generate_rag_story(gen_input, context)
+                # Improving invalidates downstream results based on the old story
+                st.session_state.rag_risks = None
+                st.session_state.rag_test_cases = None
+                st.session_state.rag_estimation = None
+            st.success("✅ Story improved. Scroll down to see the update.")
 
-        st.success("✅ Done. Scroll down for outputs.")
+    with a5:
+        if st.button("⚠️ Risks", key="rag_adv_risks", disabled=not st.session_state.rag_validation):
+            with st.spinner("Detecting risks..."):
+                st.session_state.rag_risks = detect_risks(st.session_state.rag_story)
+
+    with a6:
+        if st.button("🧪 Test Cases", key="rag_adv_tests", disabled=not st.session_state.rag_validation):
+            with st.spinner("Writing test cases..."):
+                st.session_state.rag_test_cases = generate_test_cases(st.session_state.rag_story)
+
+    if st.button("📊 Estimate", key="rag_adv_estimate", disabled=not st.session_state.rag_validation):
+        with st.spinner("Estimating story points..."):
+            st.session_state.rag_estimation = estimate_story(st.session_state.rag_story)
+
+    # Smart guidance
+    if not st.session_state.rag_input_validation:
+        st.info("👉 Step 1: Click 'Validate Input'")
+    elif st.session_state.rag_story is None:
+        st.info("👉 Step 2: Click 'Generate'")
+    elif st.session_state.rag_validation is None:
+        st.info("👉 Step 3: Click 'Validate Story'")
+    else:
+        st.success("👉 Now: Improve / Risks / Test Cases / Estimate, or push to Jira from the Story tab 🚀")
 
 
 # ─── OUTPUT PREVIEW ───────────────────────────────────────────────────────
@@ -301,9 +400,15 @@ else:
 
 # ─── TABS ─────────────────────────────────────────────────────────────────
 
-tab_ctx, tab_story, tab_val, tab_risk, tab_test, tab_est = st.tabs(
-    ["📚 Retrieved Context", "🧾 Story", "✅ Validation", "⚠️ Risks", "🧪 Test Cases", "📊 Estimation"]
+tab_in, tab_ctx, tab_story, tab_val, tab_risk, tab_test, tab_est = st.tabs(
+    ["🧠 Input Check", "📚 Retrieved Context", "🧾 Story", "✅ Validation", "⚠️ Risks", "🧪 Test Cases", "📊 Estimation"]
 )
+
+with tab_in:
+    if st.session_state.rag_input_validation:
+        st.code(st.session_state.rag_input_validation)
+    else:
+        st.caption("Run 'Validate Input' (Advanced) or 'Generate Everything' (Simple) to see input analysis.")
 
 with tab_ctx:
     if st.session_state.rag_retrieved_preview:
