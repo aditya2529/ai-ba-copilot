@@ -150,6 +150,24 @@ st.info(
 
 # ─── CORPUS STATUS ────────────────────────────────────────────────────────
 
+# Auto-seed an empty corpus (e.g. a fresh Streamlit Cloud boot) from the
+# bundled seed_corpus.json BEFORE rendering counts, so the demo is never empty.
+# Runs at most once per session; dedupe makes it safe.
+if (
+    not st.session_state.get("rag_seed_tried")
+    and rag_ingest.seed_available()
+):
+    st.session_state.rag_seed_tried = True
+    try:
+        if rag_store.count().get("total", 0) == 0:
+            with st.spinner("First-time setup: loading the sample corpus (one-time, ~30s)..."):
+                n = rag_ingest.ingest_seed()
+            if n:
+                st.session_state.rag_flash = f"📚 Loaded {n} sample stories into the corpus."
+                st.rerun()
+    except Exception:
+        pass
+
 st.markdown("### 📊 Corpus Status")
 counts = _render_corpus_status()
 

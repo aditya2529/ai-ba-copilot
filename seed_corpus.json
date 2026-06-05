@@ -1,0 +1,533 @@
+[
+  {
+    "id": "history::20260505_071040_385564",
+    "text": "Title: Validate Card Fields on Submission\n\nDescription:\nAs a registered customer, I want to validate card fields (number, expiry date, and CVV) during the payment process, so that I can prevent failed payments from invalid card data and ensure a smooth checkout experience.\n\nAcceptance Criteria:\n- Given a customer enters a valid credit card number, expiry date, and CVV, When they click \"Submit\" on the Payment page, Then a confirmation message \"Payment successful\" is displayed within 2 seconds and the order status is updated to \"Paid\".\n- Given a customer enters an invalid credit card number (e.g., 4111111111111111), When they click \"Submit\" on the Payment page, Then an error message \"Invalid card number. Please check and try again\" is displayed below the Card Number field and the Submit button is disabled.\n- Given a customer attempts to make a payment after 3 failed attempts from the same IP address, When they click \"Submit\" on the Payment page, Then a banner reads \"Payment attempts blocked for 30 minutes. Please try again later\" and the Submit button is disabled for 30 minutes.\n\nTitle: Display Coupon Error Messages on Application\n\nDescription:\nAs a registered customer, I want to display clear error messages when applying a discount coupon during checkout, so that I can understand why the coupon is invalid or expired and make the necessary corrections.\n\nAcceptance Criteria:\n- Given a customer enters a valid discount coupon code, When they click \"Apply Coupon\" on the Checkout page, Then the discount amount is applied to the order total and the coupon code is displayed below the Coupon field.\n- Given a customer enters an expired discount coupon code (e.g., EXPIREDCOUPON), When they click \"Apply Coupon\" on the Checkout page, Then an error message \"Coupon has expired. Please try a different code\" is displayed below the Coupon field and the Apply Coupon button is disabled.\n- Given a customer enters an invalid discount coupon code (e.g., INVALIDCOUPON), When they click \"Apply Coupon\" on the Checkout page, Then an error message \"Invalid coupon code. Please check and try again\" is displayed below the Coupon field and the Apply Coupon button is disabled.",
+    "metadata": {
+      "label": "05 May 2026, 07:10",
+      "mode": "Simple",
+      "source": "history"
+    }
+  },
+  {
+    "id": "history::20260505_065600_539042",
+    "text": "Title: Validate Card Fields on Submission\n\nDescription:\nAs a registered customer, I want to validate my card details (card number, expiry date, and CVV) during the checkout process, so that I can complete my order successfully without errors.\n\nAcceptance Criteria:\n- Given a customer has entered valid card details, When they click \"Place Order\" on the Checkout page, Then the order is processed successfully and a confirmation email is sent to the customer within 2 minutes.\n- Given a customer has entered an invalid card number, When they click \"Place Order\" on the Checkout page, Then the error message \"Invalid card number. Please check and try again\" is displayed below the Card Number field.\n- Given a customer has entered an expired card expiry date, When they click \"Place Order\" on the Checkout page, Then the error message \"Card expiry date is invalid. Please check and try again\" is displayed below the Expiry Date field.\n\nTitle: Prevent Multiple Failed Payment Attempts and Disable Order Placement\n\nDescription:\nAs a registered customer, I want to prevent further payment attempts after 3 failed attempts and disable order placement, so that I can avoid potential security risks and protect my account.\n\nAcceptance Criteria:\n- Given a customer has 3 or more failed payment attempts, When they attempt to place an order, Then the system displays the message \"Payment attempts exceeded. Please contact customer support\" and the Place Order button is disabled.\n- Given a customer has 2 failed payment attempts, When they attempt to place an order, Then the system displays a warning message \"Two failed payment attempts. Please review your card details and try again\" and the Place Order button is enabled but with a warning icon.\n- Given a customer has no failed payment attempts, When they attempt to place an order, Then the order is processed successfully and a confirmation email is sent to the customer within 2 minutes.",
+    "metadata": {
+      "source": "history",
+      "mode": "Advanced",
+      "label": "05 May 2026, 06:56"
+    }
+  },
+  {
+    "id": "history::20260505_065552_667824",
+    "text": "Title: Validate Card Fields on Submission\n\nDescription:\nAs a registered customer, I want to validate my card details (card number, expiry date, and CVV) during the checkout process, so that I can complete my order successfully without errors.\n\nAcceptance Criteria:\n- Given a customer has entered valid card details, When they click \"Place Order\" on the Checkout page, Then the order is processed successfully and a confirmation email is sent to the customer within 2 minutes.\n- Given a customer has entered an invalid card number, When they click \"Place Order\" on the Checkout page, Then the error message \"Invalid card number. Please check and try again\" is displayed below the Card Number field.\n- Given a customer has entered an expired card expiry date, When they click \"Place Order\" on the Checkout page, Then the error message \"Card expiry date is invalid. Please check and try again\" is displayed below the Expiry Date field.\n\nTitle: Prevent Multiple Failed Payment Attempts\n\nDescription:\nAs a registered customer, I want to prevent further payment attempts after 3 failed attempts, so that I can avoid potential security risks and protect my account.\n\nAcceptance Criteria:\n- Given a customer has 3 or more failed payment attempts, When they attempt to place an order, Then the system displays the message \"Payment attempts exceeded. Please contact customer support\" and the Place Order button is disabled.\n- Given a customer has 2 failed payment attempts, When they attempt to place an order, Then the system displays a warning message \"Two failed payment attempts. Please review your card details and try again\" and the Place Order button is enabled but with a warning icon.\n- Given a customer has no failed payment attempts, When they attempt to place an order, Then the order is processed successfully and a confirmation email is sent to the customer within 2 minutes.",
+    "metadata": {
+      "mode": "Advanced",
+      "label": "05 May 2026, 06:55",
+      "source": "history"
+    }
+  },
+  {
+    "id": "history::20260505_065439_709503",
+    "text": "Title: Validate Card Fields on Submission\n\nDescription:\nAs a registered customer, I want to ensure that my card details are validated correctly during the checkout process, so that I can complete the payment successfully and avoid failed transactions.\n\nAcceptance Criteria:\n- Given a valid card number, expiry date, and CVV, When I submit the payment form, Then the payment is processed successfully and a confirmation message is displayed within 2 seconds.\n- Given an invalid card number, When I submit the payment form, Then an error message \"Invalid card number. Please check and try again.\" is displayed below the card number field and the payment button is disabled.\n\nTitle: Display Clear Error Messages on Payment Failure\n\nDescription:\nAs a registered customer, I want to receive clear error messages when my payment fails, so that I can identify the issue and correct it to complete the payment successfully.\n\nAcceptance Criteria:\n- Given a failed payment due to insufficient funds, When I submit the payment form, Then an error message \"Insufficient funds. Please check your account balance and try again.\" is displayed below the payment button and the payment button is disabled.\n- Given a failed payment after 3 consecutive attempts, When I submit the payment form, Then a message \"Payment blocked due to security reasons. Please contact customer support for assistance.\" is displayed below the payment button and the payment button is disabled.",
+    "metadata": {
+      "source": "history",
+      "mode": "Simple",
+      "label": "05 May 2026, 06:54"
+    }
+  },
+  {
+    "id": "jira::SCRUM-75",
+    "text": "Title: Temporarily Restrict Users with Repeated Failed Notification Attempts\n\nDescription:\nAs a system administrator, I want to temporarily restrict users with repeated failed notification attempts to prevent abuse, so that the system remains secure and reliable.\n\nAcceptance Criteria:\n\n• - Given a user has attempted to send notifications 3 times in a row with failed delivery attempts, When they attempt to update their notification preferences, Then the system displays the message \"Your account has been temporarily restricted due to repeated failed notification attempts — please contact support to resolve\" on the notification preferences page and disables the update button.\n\n• - Given a user has had their account restricted due to repeated failed notification attempts, When they contact support and resolve the issue, Then the system removes the restriction and enables the update button on the notification preferences page.\n\n• - Given a user has not attempted to send notifications in the past 30 days, When they attempt to update their notification preferences, Then the system does not restrict their account and allows them to update their preferences normally.",
+    "metadata": {
+      "label": "SCRUM-75",
+      "source": "jira",
+      "summary": "Temporarily Restrict Users with Repeated Failed Notification Attempts"
+    }
+  },
+  {
+    "id": "jira::SCRUM-74",
+    "text": "Title: Validate Email Addresses for Delivery Attempts\n\nDescription:\nAs a system administrator, I want to validate email addresses for delivery attempts to prevent failed notifications, so that users receive timely and accurate updates.\n\nAcceptance Criteria:\n\n• - Given a user has entered a valid email address, When they attempt to update their notification preferences, Then the system sends a confirmation email to the user within 2 minutes and displays a success message on the notification preferences page.\n\n• - Given a user has entered an invalid email address (e.g., missing '@' symbol), When they attempt to update their notification preferences, Then the system displays the error message \"Invalid email address: please check and try again\" next to the email field.\n\n• - Given a user has entered a valid email address but the delivery attempt fails due to network issues, When they attempt to update their notification preferences, Then the system displays the error message \"Failed to send email: please try again later\" on the notification preferences page.",
+    "metadata": {
+      "summary": "Validate Email Addresses for Delivery Attempts",
+      "source": "jira",
+      "label": "SCRUM-74"
+    }
+  },
+  {
+    "id": "jira::SCRUM-73",
+    "text": "Title: Display Error Message for Invalid Coupon Code\n\nAcceptance Criteria:\n\n• - Given a customer has entered a valid coupon code, When they apply the coupon during checkout, Then the coupon code field turns green and the discount amount is displayed.\n\n• - Given a customer has entered an invalid coupon code (e.g., \"ABC123\"), When they apply the coupon during checkout, Then the coupon code field turns red and displays the error message \"Invalid coupon code. Please check the code and try again.\"\n\n• - Given a customer has entered an expired coupon code (e.g., \"XYZ456\" with an expiration date of 01/2020), When they apply the coupon during checkout, Then the coupon code field turns red and displays the error message \"Coupon has expired. Please use a valid coupon code and try again.\"",
+    "metadata": {
+      "source": "jira",
+      "label": "SCRUM-73",
+      "summary": "Display Error Message for Invalid Coupon Code"
+    }
+  },
+  {
+    "id": "jira::SCRUM-72",
+    "text": "Title: Validate Card Fields on Submission\n\nAcceptance Criteria:\n\n• - Given a customer has entered a valid card number, When they submit the payment form, Then the card number field turns green and the \"Pay Now\" button is enabled.\n\n• - Given a customer has entered an invalid card number (e.g., \"1234567890123456\"), When they submit the payment form, Then the card number field turns red and displays the error message \"Invalid card number. Please check and try again.\"\n\n• - Given a customer has entered a card number with an expired expiry date (e.g., \"01/2020\"), When they submit the payment form, Then the expiry date field turns red and displays the error message \"Card has expired. Please update your card details and try again.\"",
+    "metadata": {
+      "summary": "Validate Card Fields on Submission",
+      "label": "SCRUM-72",
+      "source": "jira"
+    }
+  },
+  {
+    "id": "jira::SCRUM-71",
+    "text": "Title: Block Further Payment Attempts After 3 Failed Attempts\n\nDescription:\nAs an admin, I want to block further payment attempts after 3 failed attempts, so that security is enhanced and the risk of fraudulent transactions is reduced.\n\nAcceptance Criteria:\n\n• - Given 3 failed payment attempts within a 30-minute window, When I attempt to make a payment, Then a message \"Payment attempts exceeded. Please try again later.\" is displayed and the payment form is disabled for 30 minutes.\n\n• - Given a valid payment attempt after 3 failed attempts, When I attempt to make a payment, Then the payment is processed successfully and the user is redirected to the order confirmation page.\n\n• - Given a payment attempt after 30 minutes of inactivity, When I attempt to make a payment, Then the payment is processed successfully and the user is redirected to the order confirmation page.",
+    "metadata": {
+      "source": "jira",
+      "label": "SCRUM-71",
+      "summary": "Block Further Payment Attempts After 3 Failed Attempts"
+    }
+  },
+  {
+    "id": "jira::SCRUM-70",
+    "text": "Title: Validate Card Details on Submission\n\nDescription:\nAs a registered customer, I want to validate card details during checkout, so that failed payment attempts are reduced and the overall checkout experience is improved.\n\nAcceptance Criteria:\n\n• - Given a valid card number, expiry date, and CVV, When I submit the payment form, Then a confirmation message is displayed and the order is processed successfully.\n\n• - Given an invalid card number, expiry date, or CVV, When I submit the payment form, Then an error message \"Invalid card details. Please check and try again.\" is displayed and the form remains unchanged.\n\n• - Given a card number that exceeds the maximum allowed length, When I submit the payment form, Then an error message \"Invalid card details. Please check and try again.\" is displayed and the form remains unchanged.",
+    "metadata": {
+      "summary": "Validate Card Details on Submission",
+      "label": "SCRUM-70",
+      "source": "jira"
+    }
+  },
+  {
+    "id": "jira::SCRUM-69",
+    "text": "Title: Display Clear Error Messages for Payment Failures\n\nDescription:\nAs a user, I want to receive clear error messages during payment failures, so that I can understand the reason for the failure.\n\nAcceptance Criteria:\n\n• - Given the user is on the payment page, When they enter expired card details, Then an error message is displayed indicating the expired card details.\n\n• - Given the user is on the payment page, When the payment fails due to insufficient funds, Then an error message is displayed indicating insufficient funds.\n\n• - Given the user is on the payment page, When the payment fails due to a network error, Then an error message is displayed indicating a network error.",
+    "metadata": {
+      "label": "SCRUM-69",
+      "source": "jira",
+      "summary": "Display Clear Error Messages for Payment Failures"
+    }
+  },
+  {
+    "id": "jira::SCRUM-68",
+    "text": "Title: Validate Payment Details During Checkout\n\nDescription:\nAs a user, I want to validate card details during the payment process, so that I receive clear error messages if the payment fails.\n\nAcceptance Criteria:\n\n• - Given the user is on the payment page, When they enter invalid card details, Then an error message is displayed indicating the invalid card details.\n\n• - Given the user is on the payment page, When they enter valid card details, Then the payment is processed successfully.\n\n• - Given the user is on the payment page, When the card details are missing a required field, Then an error message is displayed indicating the missing field.",
+    "metadata": {
+      "label": "SCRUM-68",
+      "source": "jira",
+      "summary": "Validate Payment Details During Checkout"
+    }
+  },
+  {
+    "id": "jira::SCRUM-67",
+    "text": "Title: Validate Card Details and Prevent Invalid Payments\n\nDescription:\nAs a Customer, I want to have my card details validated during the payment process, so that I am protected from invalid payments and ensure secure transactions.\n\nAcceptance Criteria:\n\n• - Given I enter a valid card number, When I submit the payment, Then the card number is validated and payment is processed.\n\n• - Given I enter an invalid card number, When I submit the payment, Then I receive an error message indicating invalid card details.\n\n• - Given I enter a valid card number but an expiry date in the future, When I submit the payment, Then I receive an error message indicating invalid expiry date.",
+    "metadata": {
+      "summary": "Validate Card Details and Prevent Invalid Payments",
+      "source": "jira",
+      "label": "SCRUM-67"
+    }
+  },
+  {
+    "id": "jira::SCRUM-66",
+    "text": "Title: Redirect to Payment Details Page\n\nDescription:\nAs a Customer, I want to be redirected to the payment details page after selecting a payment method, so that I can provide payment information efficiently.\n\nAcceptance Criteria:\n\n• - Given I am on the checkout page, When I select a payment method, Then I am redirected to the payment details page.\n\n• - Given I select a payment method but do not proceed to the payment details page, When I refresh the checkout page, Then I remain on the checkout page.\n\n• - Given I select a payment method but the payment gateway is unavailable, When I select the payment method, Then I see an error message indicating payment gateway unavailability.",
+    "metadata": {
+      "summary": "Redirect to Payment Details Page",
+      "label": "SCRUM-66",
+      "source": "jira"
+    }
+  },
+  {
+    "id": "jira::SCRUM-65",
+    "text": "Title: Implement Secure and Optimized Payment Validation\n\nDescription:\nAs a customer, I want to have a secure and optimized payment validation process during checkout, so that I can complete the order process efficiently and securely.\n\nAcceptance Criteria:\n\n• - Given a mobile device, When I navigate through the checkout flow, Then the layout and navigation are optimized for mobile devices.\n\n• - Given a failed payment attempt, When I try to make another payment, Then I see a clear error message and cannot make further payment attempts for a specified duration.\n\n• - Given a successful payment, When I confirm the order, Then I am redirected to the order confirmation page.",
+    "metadata": {
+      "label": "SCRUM-65",
+      "summary": "Implement Secure and Optimized Payment Validation",
+      "source": "jira"
+    }
+  },
+  {
+    "id": "jira::SCRUM-64",
+    "text": "Title: Validate Payment Details Successfully\n\nDescription:\nAs a customer, I want to validate payment details successfully during checkout, so that I can complete the order process without errors.\n\nAcceptance Criteria:\n\n• - Given a valid credit card with correct details, When I enter the card number, expiry date, and CVV, Then the payment is processed successfully.\n\n• - Given an invalid credit card with incorrect details, When I enter the card number, expiry date, and CVV, Then an error message is displayed indicating invalid payment details.\n\n• - Given an expired credit card, When I enter the card number, expiry date, and CVV, Then an error message is displayed indicating an expired card.",
+    "metadata": {
+      "source": "jira",
+      "summary": "Validate Payment Details Successfully",
+      "label": "SCRUM-64"
+    }
+  },
+  {
+    "id": "jira::SCRUM-63",
+    "text": "Title: As a user, I want to be able to update my profile details, including name and phone number, with validation for incorrect inputs, so that I can maintain accurate and up-to-date information.\n\nDescription:\n**\n\n* Update profile details (name and phone number)\n\n* Validate for incorrect inputs (phone number format and mandatory fields)\n\n* Upload or update profile picture\n\n* Display error message for unsupported image formats or exceeding size limits\n\n* Display confirmation message after successful profile update\n\n* Temporarily restrict excessive profile updates for security reasons\n\n* Ensure seamless user experience on mobile devices\n\n**\n\nAcceptance Criteria:\n\n• **\n\n• 1. The system allows users to update their name and phone number.\n\n• 2. The system validates the phone number format to ensure it is correct.\n\n• 3. The system checks for mandatory fields (name and phone number) to ensure they are filled in.\n\n• 4. The system allows users to upload or update their profile picture.\n\n• 5. The system displays an error message if the uploaded image format is not supported.\n\n• 6. The system displays an error message if the uploaded image exceeds size limits.\n\n• 7. The system displays a confirmation message after a successful profile update.\n\n• 8. The system temporarily restricts excessive profile updates to prevent potential security risks.\n\n• 9. The profile management feature works properly on mobile devices, providing a seamless user experience.\n\n• 10. The system handles errors and exceptions gracefully, providing a user-friendly experience.\n\n• **Assumptions and Dependencies:**\n\n• * The system has a user authentication mechanism in place.\n\n• * The system has a profile management database schema that stores user profile information.\n\n• * The system has a file upload mechanism in place for uploading profile pictures.\n\n• * The system has a security mechanism in place to prevent excessive profile updates.\n\n• **Priority:** High\n\n• **Estimated Effort:** 40 hours\n\n• **Risks and Assumptions:**\n\n• * The system's security mechanism may need to be adjusted to prevent excessive profile updates.\n\n• * The system's file upload mechanism may need to be adjusted to handle different image formats and size limits.\n\n• * The system's profile management database schema may need to be adjusted to store user profile information.",
+    "metadata": {
+      "summary": "As a user, I want to be able to update my profile details, including name and phone number, with validation for incorrect inputs, so that I can maintain accurate and up-to-date information.",
+      "source": "jira",
+      "label": "SCRUM-63"
+    }
+  },
+  {
+    "id": "jira::SCRUM-62",
+    "text": "Title: Introduce One-Time Password (OTP) Authentication\n\nDescription:\nAs a customer, I want to see clear error messages when my email or password is invalid, so that I can understand what went wrong and try again. I also want to be able to log in using a One-Time Password (OTP), so that I can improve the security of my account.\n\nDetailed Description:\n\nThe system should display clear error messages when the email or password is invalid. The user should be able to log in using either their password or OTP. The system should generate a One-Time Password (OTP) for the customer and allow them to enter it to log in.\n\nAcceptance Criteria:\n\n• Display Clear Error Messages for Invalid Login Credentials:\n\n• - Given the email or password is invalid, When the user submits the login form, Then the system displays a clear error message indicating the invalid field (email or password).\n\n• - Given the email is invalid, When the user submits the login form, Then the system displays a clear error message indicating the invalid email.\n\n• - Given the password is invalid, When the user submits the login form, Then the system displays a clear error message indicating the invalid password.\n\n• Introduce One-Time Password (OTP) Authentication:\n\n• - Given the customer has a valid account, When the system generates a One-Time Password (OTP), Then the system stores the OTP securely.\n\n• - Given the customer has a valid OTP, When the customer enters the OTP to log in, Then the system logs the customer in successfully.\n\n• - Given the OTP is incorrect or expired, When the customer enters the OTP to log in, Then the system displays an error message indicating the incorrect or expired OTP.",
+    "metadata": {
+      "summary": "Introduce One-Time Password (OTP) Authentication",
+      "source": "jira",
+      "label": "SCRUM-62"
+    }
+  },
+  {
+    "id": "jira::SCRUM-61",
+    "text": "Title: Display Proper Error Messages for Payment Failure\n\nDescription:\nAs a customer, I want the system to validate my card details during checkout and display proper error messages for payment failure, so that I can provide accurate payment information and understand the issue if payment fails.\n\nDetailed Description:\n\nThe system should check for valid card number, expiration date, and security code during checkout. If the card details are invalid, the system should display an error message indicating the specific issue. The system should also display a clear and concise error message if payment fails, including a clear call-to-action to correct the issue and retry the payment.",
+    "metadata": {
+      "source": "jira",
+      "summary": "Display Proper Error Messages for Payment Failure",
+      "label": "SCRUM-61"
+    }
+  },
+  {
+    "id": "jira::SCRUM-60",
+    "text": "Title: Display Error Message for Expired Password Reset Link and Redirect to Login Page After Successful Password Reset\n\nDescription:\nAs a User, I want to see a clear error message when I click on an expired password reset link and be redirected to the login page after a successful password reset, so that I can understand the issue and take the necessary action.\n\nAcceptance Criteria:\n\n• Given the user clicks on an expired password reset link, When the system checks the link's expiration status, Then the system displays a clear error message indicating the link has expired.\n\n• Given the user clicks on a valid password reset link, When the user successfully resets their password, Then the system redirects the user to the login page.\n\n• Given the user clicks on a valid password reset link, When the user fails to reset their password, Then the system displays an error message without redirecting the user.",
+    "metadata": {
+      "source": "jira",
+      "label": "SCRUM-60",
+      "summary": "Display Error Message for Expired Password Reset Link and Redirect to Login Page After Successful Password Reset"
+    }
+  },
+  {
+    "id": "jira::SCRUM-59",
+    "text": "Title: Display Error Message for Expired Password Reset Link\n\nDescription:\nAs a User, I want to see a clear error message when I click on an expired password reset link, so that I can understand the issue and take the necessary action.\n\nAcceptance Criteria:\n\n• Given the user clicks on an expired password reset link, When the system checks the link's expiration status, Then the system displays a clear error message indicating the link has expired.\n\n• Given the user clicks on a valid password reset link, When the system checks the link's expiration status, Then the system does not display an error message.\n\n• Given the user clicks on an expired password reset link, When the system attempts to redirect the user to another page, Then the system displays the error message without redirecting the user.",
+    "metadata": {
+      "source": "jira",
+      "summary": "Display Error Message for Expired Password Reset Link",
+      "label": "SCRUM-59"
+    }
+  },
+  {
+    "id": "jira::SCRUM-58",
+    "text": "Title: Redirect to Login Page after Successful Registration\n\nDescription:\nAs a user, I want to register with email verification to ensure my account is secure, so that I can securely access my account.\n\nAs a user, I want to be redirected to the login page after successful registration, so that I can log in to my account.\n\nDetailed Description: The system should send a One-Time Password (OTP) to the user's email for verification. The user should enter the OTP to activate the account. The system should verify the OTP before activating the account. The system should prevent registration with an email that already exists in the system.",
+    "metadata": {
+      "label": "SCRUM-58",
+      "summary": "Redirect to Login Page after Successful Registration",
+      "source": "jira"
+    }
+  },
+  {
+    "id": "jira::SCRUM-57",
+    "text": "Title: Secure User Registration with Email Verification",
+    "metadata": {
+      "summary": "Secure User Registration with Email Verification",
+      "label": "SCRUM-57",
+      "source": "jira"
+    }
+  },
+  {
+    "id": "jira::SCRUM-56",
+    "text": "Title: Display Validation Message for Incorrect Email or Password\n\nDescription:\nThe system will display a validation message to the user when they enter an incorrect email or password during login.\n\nAcceptance Criteria:\n\n• Given the user enters an incorrect email, When the user submits the login form, Then the system displays a validation message indicating the incorrect email.\n\n• Given the user enters an incorrect password, When the user submits the login form, Then the system displays a validation message indicating the incorrect password.\n\n• Given the user enters both correct email and password, When the user submits the login form, Then the system does not display a validation message.",
+    "metadata": {
+      "source": "jira",
+      "label": "SCRUM-56",
+      "summary": "Display Validation Message for Incorrect Email or Password"
+    }
+  },
+  {
+    "id": "jira::SCRUM-55",
+    "text": "Title: Display Validation Message for Incorrect Credentials",
+    "metadata": {
+      "source": "jira",
+      "label": "SCRUM-55",
+      "summary": "Display Validation Message for Incorrect Credentials"
+    }
+  },
+  {
+    "id": "jira::SCRUM-54",
+    "text": "Title: Provide OTP-Based Login for Added Security\n\nDescription:\nAs a user attempting to log in to the system, I want to see clear error messages when entering incorrect email or password and have the option to use OTP-based login for added security, so that I can quickly identify and correct my mistakes and feel more confident in the security of my account.\n\nDetailed Description:\n\nThe system should display clear error messages for incorrect login credentials and provide an option to use OTP-based login for users who have enabled this feature. The OTP should be sent to the user's registered email or phone number and be valid for a limited time.\n\nAcceptance Criteria:\n\n• 1. Given the user enters an incorrect email, When the user submits the login form, Then the system displays a clear error message indicating the incorrect email.\n\n• 2. Given the user enters an incorrect password, When the user submits the login form, Then the system displays a clear error message indicating the incorrect password.\n\n• 3. Given the user has enabled OTP-based login, When the user submits the login form, Then the system sends a one-time password to the user's registered email or phone number.",
+    "metadata": {
+      "label": "SCRUM-54",
+      "summary": "Provide OTP-Based Login for Added Security",
+      "source": "jira"
+    }
+  },
+  {
+    "id": "jira::SCRUM-53",
+    "text": "Title: Display Clear Error Messages for Incorrect Login Credentials",
+    "metadata": {
+      "summary": "Display Clear Error Messages for Incorrect Login Credentials",
+      "label": "SCRUM-53",
+      "source": "jira"
+    }
+  },
+  {
+    "id": "jira::SCRUM-52",
+    "text": "Title: Validate OTP and Prevent Brute-Force Attacks\n\nDescription:\n** As a system, I want to validate OTP and prevent brute-force attacks by limiting OTP attempts and logging verification attempts.\n\n**\n\nAcceptance Criteria:\n\n• **\n\n• 1. Given a user initiates OTP login, When the system checks for OTP validity, Then it logs all OTP verification attempts (both success and failure) for audit purposes.\n\n• 2. Given a user has 5 failed OTP attempts, When the system checks for OTP attempt limit, Then it displays a clear error message indicating that the OTP attempts have been blocked.\n\n• 3. Given a user successfully logs in, When the system checks for OTP reuse, Then it redirects users to their dashboard after successful OTP verification.",
+    "metadata": {
+      "source": "jira",
+      "label": "SCRUM-52",
+      "summary": "Validate OTP and Prevent Brute-Force Attacks"
+    }
+  },
+  {
+    "id": "jira::SCRUM-51",
+    "text": "Title: Redesign OTP Login Flow for Better Security and User Experience\n\nDescription:\n** As a user, I want to improve the OTP login flow to enhance security and user experience by reducing errors and improving OTP validation.\n\n**\n\nAcceptance Criteria:\n\n• **\n\n• 1. Given a user initiates OTP login, When the system checks for OTP validity, Then it displays a clear error message if the OTP is invalid or expired.\n\n• 2. Given a user enters an OTP, When the system checks for OTP reuse, Then it prevents OTP reuse once it is successfully used.\n\n• 3. Given a user has 5 failed OTP attempts, When the system checks for OTP attempt limit, Then it temporarily blocks further OTP attempts.\n\n• **User Story 2: Improve OTP Validation and Security**\n\n• **",
+    "metadata": {
+      "summary": "Redesign OTP Login Flow for Better Security and User Experience",
+      "label": "SCRUM-51",
+      "source": "jira"
+    }
+  },
+  {
+    "id": "jira::SCRUM-50",
+    "text": "Title: Display Error Messages in a Clear and Concise Format\n\nAcceptance Criteria:\n\n• 1. Given the user enters an invalid username, When the system displays an error message, Then the error message is displayed in a clear and concise format with a maximum of 50 characters.\n\n• 2. Given the user enters an invalid password, When the system displays an error message, Then the error message is displayed in a clear and concise format with a maximum of 50 characters.\n\n• 3. Given the user enters both an invalid username and password, When the system displays an error message, Then the error message is displayed in a clear and concise format with a maximum of 100 characters.",
+    "metadata": {
+      "label": "SCRUM-50",
+      "source": "jira",
+      "summary": "Display Error Messages in a Clear and Concise Format"
+    }
+  },
+  {
+    "id": "jira::SCRUM-49",
+    "text": "Title: Display Clear Error Messages for Invalid Credentials\n\nAcceptance Criteria:\n\n• 1. Given the user enters an invalid username, When the user submits the login form, Then the system displays a clear error message indicating the username is invalid.\n\n• 2. Given the user enters an invalid password, When the user submits the login form, Then the system displays a clear error message indicating the password is invalid.\n\n• 3. Given the user enters both an invalid username and password, When the user submits the login form, Then the system displays a clear error message indicating both the username and password are invalid.\n\n• **",
+    "metadata": {
+      "summary": "Display Clear Error Messages for Invalid Credentials",
+      "label": "SCRUM-49",
+      "source": "jira"
+    }
+  },
+  {
+    "id": "jira::SCRUM-48",
+    "text": "Title: OTP Verification and Logging\n\nDescription:\n**\nAs a Customer, I want the system to verify and log my OTP input and verification attempt, so that the system meets the required security standards for online transactions.\n\n**\n\nAcceptance Criteria:\n\n• **\n\n• - Given the customer inputs a valid OTP, When the system verifies the OTP, Then the system logs the OTP input and verification attempt for security audit purposes.\n\n• - Given the customer inputs an invalid OTP, When the system verifies the OTP, Then the system logs the OTP input and verification attempt with an error message.\n\n• - Given the system is configured to meet the required security standards, When the customer inputs their OTP, Then the system logs the OTP input and verification attempt in accordance with the security standards.",
+    "metadata": {
+      "source": "jira",
+      "label": "SCRUM-48",
+      "summary": "OTP Verification and Logging"
+    }
+  },
+  {
+    "id": "jira::SCRUM-47",
+    "text": "Title: Secure OTP Input\n\nDescription:\n**\nAs a Customer, I want to input my One-Time Password (OTP) to authenticate and access my account securely, so that I can meet the security requirements for online transactions.\n\n**\n\nAcceptance Criteria:\n\n• **\n\n• - Given the customer has a registered contact method, When the customer inputs their OTP, Then the system verifies the OTP against the stored OTP.\n\n• - Given the OTP is valid, When the customer inputs their OTP, Then the system grants access to the customer's account.\n\n• - Given the OTP is invalid (e.g., expired or incorrect), When the customer inputs their OTP, Then the system displays an error message to the customer.\n\n• **User Story 2:**\n\n• **",
+    "metadata": {
+      "source": "jira",
+      "label": "SCRUM-47",
+      "summary": "Secure OTP Input"
+    }
+  },
+  {
+    "id": "jira::SCRUM-46",
+    "text": "Title: Reset password using email\n\nDescription:\n** As a user, I want to reset my password using the \"Forgot Password\" option to improve user experience and security.\n\n**\n\nAcceptance Criteria:\n\n• **\n\n• 1. Given a valid email, When the user clicks the \"Forgot Password\" button, Then the system sends a password reset link to the user's email.\n\n• 2. Given an invalid email, When the user clicks the \"Forgot Password\" button, Then the system displays an error message indicating \"Invalid email\".\n\n• 3. Given a password reset link that has expired, When the user attempts to reset their password, Then the system displays an error message indicating \"Password reset link has expired\".",
+    "metadata": {
+      "label": "SCRUM-46",
+      "source": "jira",
+      "summary": "Reset password using email"
+    }
+  },
+  {
+    "id": "jira::SCRUM-45",
+    "text": "Title: Log in using email and password\n\nDescription:\n** As a user, I want to log in to the system using email and password to improve user experience and security.\n\n**\n\nAcceptance Criteria:\n\n• **\n\n• 1. Given a valid email and password, When the user attempts to log in, Then the system redirects the user to the dashboard.\n\n• 2. Given an invalid email, When the user attempts to log in, Then the system displays an error message indicating \"Invalid email\".\n\n• 3. Given a password with less than 8 characters, When the user attempts to log in, Then the system displays an error message indicating \"Password must be at least 8 characters long\".\n\n• **User Story 2: Password Reset**\n\n• **",
+    "metadata": {
+      "source": "jira",
+      "label": "SCRUM-45",
+      "summary": "Log in using email and password"
+    }
+  },
+  {
+    "id": "jira::SCRUM-44",
+    "text": "Title: Log OTP Input and Authentication Attempt\n\nDescription:\n** As a Customer, I want the system to log the OTP input and authentication attempt for security auditing purposes so that I can ensure account security and prevent unauthorized access.\n\n**\n\nAcceptance Criteria:\n\n• **\n\n• 1. Given the Customer inputs the OTP and attempts to authenticate, When the system authenticates the Customer's account, Then the system logs the OTP input and authentication attempt for security auditing purposes.\n\n• 2. Given the Customer inputs an invalid OTP, When they attempt to authenticate, Then the system logs the OTP input and authentication attempt as a failed authentication attempt.\n\n• 3. Given the system is configured to store logs for a specified period, When the system logs the OTP input and authentication attempt, Then the system stores the log for the specified period.",
+    "metadata": {
+      "label": "SCRUM-44",
+      "summary": "Log OTP Input and Authentication Attempt",
+      "source": "jira"
+    }
+  },
+  {
+    "id": "jira::SCRUM-43",
+    "text": "Title: Input OTP for Account Authentication\n\nDescription:\n** As a Customer, I want to be able to input the One-Time Password (OTP) sent to my registered mobile number so that I can authenticate my account and access my account dashboard.\n\n**\n\nAcceptance Criteria:\n\n• **\n\n• 1. Given the Customer has a registered mobile number, When they input the OTP sent to that number, Then the system verifies the OTP and authenticates the Customer's account.\n\n• 2. Given the Customer inputs an invalid OTP, When they attempt to authenticate, Then the system displays an error message and prevents unauthorized access.\n\n• 3. Given the Customer attempts to input the OTP multiple times with a reasonable delay between attempts, When they input the OTP correctly, Then the system authenticates the Customer's account and redirects them to their account dashboard.\n\n• **",
+    "metadata": {
+      "label": "SCRUM-43",
+      "summary": "Input OTP for Account Authentication",
+      "source": "jira"
+    }
+  },
+  {
+    "id": "jira::SCRUM-42",
+    "text": "Title: Search Doctors by Specialty and Location\n\nDescription:\n** As a user, I want to search doctors by specialty, location, and availability so that I can find a suitable doctor for an appointment.\n\n**\n\nAcceptance Criteria:\n\n• **\n\n• - Given a user is logged in, When they submit a search form with specialty, location, and availability, Then a list of matching doctors is displayed.\n\n• - Given a user selects multiple specialties, When they submit the search form, Then doctors matching any of the selected specialties are returned.\n\n• - Given a user selects a location with no available doctors, When they submit the search form, Then a message indicating no available doctors is displayed.\n\n• **User Story 2: Book Appointment**\n\n• **Title:** Book Appointment with Chosen Doctor\n\n• **Description:** As a user, I want to select a doctor and book an appointment slot so that I can schedule an appointment with a chosen doctor.\n\n• **Acceptance Criteria:**\n\n• - Given a user selects a doctor and a time slot, When they submit the booking form, Then the system validates the selected time slot for availability.\n\n• - Given a user selects a time slot already booked, When they submit the booking form, Then an error message indicating the time slot is not available is displayed.\n\n• - Given a user selects a time slot with a conflict, When they submit the booking form, Then an error message indicating a conflict is displayed.",
+    "metadata": {
+      "label": "SCRUM-42",
+      "summary": "Search Doctors by Specialty and Location",
+      "source": "jira"
+    }
+  },
+  {
+    "id": "jira::SCRUM-41",
+    "text": "Title: Add Product to Cart\n\nDescription:\nUser Story\n\nAs a user, I want to be able to add products to my cart and proceed to checkout, so that I can complete my purchase.\n\nDescription\n\nDescription:\n\nAcceptance Criteria\n\nGiven a user is logged in and browsing products, When the user clicks the \"Add to Cart\" button, Then the product is added to the user's cart.\n\n\nGiven a user has added products to their cart, When the user clicks the \"Proceed to Checkout\" button, Then the system navigates the user to the checkout page.\n\n\nGiven a user has added products to their cart and is on the checkout page, When the user clicks the \"Back to Cart\" button, Then the system navigates the user back to the cart page.\n\n\nValidate Shipping Address",
+    "metadata": {
+      "label": "SCRUM-41",
+      "summary": "Add Product to Cart",
+      "source": "jira"
+    }
+  },
+  {
+    "id": "jira::SCRUM-40",
+    "text": "Title: **Add Product to Cart**\n\nDescription:\nDescription\n\nAdd Product to Cart",
+    "metadata": {
+      "label": "SCRUM-40",
+      "summary": "**Add Product to Cart**",
+      "source": "jira"
+    }
+  },
+  {
+    "id": "jira::SCRUM-39",
+    "text": "Title: **User Login and Security Requirements**  ### Actor - **User**: The person attempting to access the\n\nDescription:\nDescription\n\nUser Login and Security Requirements\n\n### Actor\n\nUser: The person attempting to access the system.\n\n### User Stories\n\n#### 1. Successful User Login\n\nI want to be able to login to the system using email and password, so that I can authenticate and gain access to the system.\n\nAcceptance Criteria\n\n1. Given valid email and password, When I submit the login form, Then the system accepts email and password as valid login credentials and redirects me to the main dashboard.\n\n\n2. Given invalid email, When I submit the login form, Then the system displays an error message indicating invalid email.\n\n\n3. Given empty password, When I submit the login form, Then the system displays an error message indicating empty password.\n\n\n#### 2. Account Lockout and Unlock\n\n\nI want the system to lock my account after a specified number of failed login attempts and unlock it after a specified period of time or upon successful login, so that I am protected from brute-force attacks and can regain access to the system.\n\n\n1. Given a specified number of failed login attempts, When I attempt to login, Then the system locks my account and displays a message informing me that my account has been locked.\n\n\n2. Given a specified period of time after account lockout, When I attempt to login, Then the system unlocks my account and allows me to access the system.\n\n\n3. Given successful login after account lockout, When I attempt to login, Then the system unlocks my account and allows me to access the system.",
+    "metadata": {
+      "label": "SCRUM-39",
+      "source": "jira",
+      "summary": "**User Login and Security Requirements**  ### Actor - **User**: The person attempting to access the "
+    }
+  },
+  {
+    "id": "jira::SCRUM-38",
+    "text": "Title: Error: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.1-8b-instant`\n\nDescription:\nDescription\n\nError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kq93vgp3ffdr66vef25m5xqg` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4954, Requested 1840. Please try again in 7.939999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+    "metadata": {
+      "label": "SCRUM-38",
+      "summary": "Error: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.1-8b-instant` ",
+      "source": "jira"
+    }
+  },
+  {
+    "id": "jira::SCRUM-37",
+    "text": "Title: Secure Login with Email and Password\n\nDescription:\nUser Story\n\nAs a User, I want to be able to login to the system using my email and password so that I can access the system securely.\n\nDescription\n\nDescription:\n\nAcceptance Criteria\n\nGiven valid email and password, When the user attempts to login, Then the system redirects the user to the dashboard.\n\n\nGiven invalid email or password, When the user attempts to login, Then the system displays an error message indicating invalid credentials.\n\n\nGiven a locked account due to multiple failed login attempts, When the user attempts to login, Then the system displays an error message indicating account lockout.",
+    "metadata": {
+      "summary": "Secure Login with Email and Password",
+      "source": "jira",
+      "label": "SCRUM-37"
+    }
+  },
+  {
+    "id": "jira::SCRUM-36",
+    "text": "Title: Validate User Credentials\n\nDescription:\nUser Story\n\nAs a System, I want to validate user credentials (email and password) so that I can prevent unauthorized access to the system.\n\nDescription\n\nDescription:\n\nAcceptance Criteria\n\nGiven valid email and password, When the system checks the email and password against the stored user credentials, Then the system accepts the login credentials.\n\n\nGiven invalid email or password, When the system checks the email and password against the stored user credentials, Then the system rejects the login attempt.\n\n\nGiven a valid email and an incorrect password, When the system checks the email and password against the stored user credentials, Then the system rejects the login attempt.\n\n\nUser Story 2: Secure Login with Email and Password",
+    "metadata": {
+      "source": "jira",
+      "label": "SCRUM-36",
+      "summary": "Validate User Credentials"
+    }
+  },
+  {
+    "id": "jira::SCRUM-35",
+    "text": "Title: **User Story 1: Validate User Credentials**\n\nDescription:\nDescription\n\nUser Story 1: Validate User Credentials",
+    "metadata": {
+      "label": "SCRUM-35",
+      "source": "jira",
+      "summary": "**User Story 1: Validate User Credentials**"
+    }
+  },
+  {
+    "id": "jira::SCRUM-34",
+    "text": "Title: As a Developer,\n\nDescription:\nUser Story\n\nAs a Developer,\n\nAs a Developer,\n\nAs a Developer,\n\nDescription\n\nUser Story 1: Input Code\n\nI want to be able to input code into the system for testing and debugging new features,\n\nSo that I can improve the overall quality and stability of our product.\n\nAcceptance Criteria\n\n1. Given a valid user account, When I attempt to input code into the system, Then the system displays a text-based editor where I can enter code.\n\n\n2. Given an invalid user account, When I attempt to input code into the system, Then the system displays an error message indicating that I do not have permission to access the feature.\n\n\n3. Given a large amount of code, When I attempt to input code into the system, Then the system allows me to input the code without truncating it.\n\n\n4. Given a corrupted file, When I attempt to input code from the file into the system, Then the system displays an error message indicating that the file is corrupted.\n\n\n5. Given a code snippet with syntax errors, When I attempt to save the code, Then the system displays an error message indicating that the code has syntax errors.\n\n\nEdge Cases:\n\n\nWhat if the user attempts to input code with a file size exceeding the system's limit?\n\n\nWhat if the user attempts to input code with a file type that is not supported by the system?\n\n\n1. Given a code snippet with syntax errors, When I attempt to save the code, Then the system displays an error message indicating that the code has syntax errors.\n\n\n2. Given a code snippet with no syntax errors, When I attempt to save the code, Then the system allows me to save the code without displaying any errors.\n\n\n3. Given a code snippet with a mix of syntax errors and correct code, When I attempt to save the code, Then the system displays an error message indicating that the code has syntax errors.\n\n\n4. Given a code snippet with a syntax error that is not immediately apparent, When I attempt to save the code, Then the system displays an error message indicating that the code has syntax errors.\n\n\n5. Given a code snippet with a syntax error that is not related to the code itself, When I attempt to save the code, Then the system displays an error message indicating that the code has syntax errors.\n\n\nEdge Cases:\n\n\nWhat if the user attempts to save code with a syntax error that is not immediately apparent?\n\n\nWhat if the user attempts to save code with a syntax error that is not related to the code itself?\n\n\n\nAssumptions\n\nThe user has a valid user account with permission to access the feature.\n\n\nThe system has a text-based editor for inputting code.\n\n\nOpen Questions:\n\n\nHow will the system handle code input with a large number of syntax errors?\n\n\nHow will the system handle code input with a file size exceeding the system's limit?\n\n\nUser Story 2: Validate Input Code\n\n\nI want the system to validate the input code for syntax errors before allowing it to be saved,\n\n\nSo that I can ensure that the code is correct and prevent errors from occurring.\n\n\nThe user has input code into the system.\n\n\nThe system has a mechanism for validating input code.\n\n\nOpen Questions:\n\n\nHow will the system handle code input with a large number of syntax errors?\n\n\nHow will the system handle code input with a file size exceeding the system's limit?\n\n\nUser Story 3: Execute and Display Output\n\n\nI want the system to provide a mechanism for developers to run and execute the input code,\n\n\nSo that I can test and debug new features.",
+    "metadata": {
+      "summary": "As a Developer,",
+      "source": "jira",
+      "label": "SCRUM-34"
+    }
+  },
+  {
+    "id": "jira::SCRUM-33",
+    "text": "Title: As a Developer, I want to input code to fix bugs in the development environment, so that I can impro\n\nDescription:\nDescription\n\nRefined User Story:\n\nDescription: To enable efficient bug fixing and code improvement, the system should allow developers to input code to fix bugs in the development environment, validate the input code, and provide real-time feedback on the success or failure of the code input.\n\nAcceptance Criteria\n\n1. Input Code Validation: The system validates the input code for syntax and semantic correctness, and provides immediate feedback to the developer on any errors or issues.\n\n\n2. Automated Testing: The system automatically tests the input code to ensure it fixes the bug and does not introduce new bugs or break existing functionality.\n\n\n3. Real-time Feedback: The system provides real-time feedback to the developer on the success or failure of the code input, including any errors or issues encountered during testing.\n\n\n4. Code Logging: The system logs the input code and the bug it fixes for future reference and auditing purposes.\n\n\n5. Bug Tracking: The system allows developers to track and manage bugs in the development environment, including assigning, prioritizing, and resolving bugs.\n\n\n6. Scalability: The system can handle a large volume of code inputs and complex code inputs without compromising performance or functionality.\n\n\nEach acceptance criterion is specific, measurable, achievable, relevant, and time-bound (SMART).\n\n\nEach acceptance criterion is concise and easy to understand.\n\n\nEach acceptance criterion is focused on a specific aspect of the system and does not overlap with other criteria.\n\n\nEach acceptance criterion is testable and can be verified through automated testing or manual testing.\n\n\n\nAssumptions\n\nThe system has a development environment where code can be input to fix bugs.\n\n\nThe system has a mechanism for tracking and managing bugs.\n\n\nThe system has a testing framework to validate the input code.\n\n\nNon-Functional Requirements:\n\n\nThe system should be able to handle a large volume of code inputs.\n\n\nThe system should be able to handle complex code inputs.\n\n\nThe system should provide real-time feedback to the developer.\n\n\nINVEST Principles:\n\n\nIndependent: Each acceptance criterion is independent of the others and can be tested separately.\n\n\nNegotiable: The acceptance criteria are flexible and can be adjusted based on changing requirements or priorities.\n\n\nValuable: Each acceptance criterion adds value to the system and contributes to the overall goal of improving code quality and customer satisfaction.\n\n\nEstimable: Each acceptance criterion is measurable and can be estimated in terms of time and resources required to implement.\n\n\nSmall: Each acceptance criterion is small and focused, making it easier to implement and test.\n\n\nTestable: Each acceptance criterion is testable and can be verified through automated testing or manual testing.",
+    "metadata": {
+      "source": "jira",
+      "summary": "As a Developer, I want to input code to fix bugs in the development environment, so that I can impro",
+      "label": "SCRUM-33"
+    }
+  },
+  {
+    "id": "jira::SCRUM-32",
+    "text": "Title: Enable Developers to Input and Validate Code for New Features in Development Environment\n\nDescription:\nDescription\n\nRefined User Story:\n\nDescription: As a Developer, I want to input and validate code for new features in the development environment, so that I can enable faster development, improve code quality, and ensure seamless collaboration and tracking.\n\nAcceptance Criteria\n\n1. Input Code: The development environment allows developers to input code for new features, including text editors, syntax highlighting, and code formatting.\n\n\nInput code is saved and stored in the development environment.\n\n\nInput code is displayed in a readable format.\n\n\n2. Validate Code: The input code is validated for syntax and formatting errors, including:\n\n\nSyntax checking for languages supported by the development environment.\n\n\nError reporting for syntax and formatting issues.\n\n\nSuggestions for code improvements.\n\n\n3. Store Code: The input code is stored in a version control system for tracking and collaboration, including:\n\n\nCode commits and history.\n\n\nBranching and merging capabilities.\n\n\nCode reviews and approvals.\n\n\n4. Faster Development: The development environment provides features to support faster development, including:\n\n\nCode completion and auto-suggestion.\n\n\nDebugging tools and error reporting.\n\n\nCode snippets and templates.\n\n\n5. Improved Code Quality: The code quality is improved through automated code reviews and analysis, including:\n\n\nCode style and formatting checks.\n\n\nSecurity vulnerability scanning.\n\n\nPerformance optimization suggestions.\n\n\n6. Testing and Validation: The input code is properly tested and validated before being deployed to production, including:\n\n\nUnit testing and integration testing.\n\n\nAutomated testing and validation frameworks.\n\n\nManual testing and validation.\n\n\nPriority: High\n\n\nEstimated Effort: Medium to High\n\n\nDependencies:\n\n\nDevelopment Environment Setup\n\n\nVersion Control System Integration\n\n\nCode Completion and Debugging Tools\n\n\nAutomated Code Reviews and Analysis\n\n\nTesting and Validation Framework\n\n\nINVEST Principles:\n\n\nIndependent: The user story is independent and can be developed and tested separately.\n\n\nNegotiable: The acceptance criteria are negotiable and can be adjusted based on business needs.\n\n\nValuable: The user story is valuable and aligns with business goals.\n\n\nEstimable: The estimated effort is estimable and can be measured.\n\n\nSmall: The user story is small and can be completed within a single iteration.\n\n\nTestable: The user story is testable and can be verified through automated and manual testing.",
+    "metadata": {
+      "label": "SCRUM-32",
+      "summary": "Enable Developers to Input and Validate Code for New Features in Development Environment",
+      "source": "jira"
+    }
+  },
+  {
+    "id": "jira::SCRUM-31",
+    "text": "Title: Based on the provided notes, I will convert them into user stories. Here are the user stories for th\n\nDescription:\nDescription\n\nBased on the provided notes, I will convert them into user stories. Here are the user stories for the microsaas application:\n\nUser Story 1: Automated Data Import\n\nAs the Accounting Team Lead, I want to be able to import data from various sources (e.g. QuickBooks, Xero, CSV files) into the microsaas application, so that I can reduce manual data entry and increase efficiency.\n\nAcceptance Criteria\n\nThe application can import data from at least 3 different data sources (e.g. QuickBooks, Xero, CSV files)\n\n\nThe application can handle data import from multiple sources simultaneously\n\n\nThe application can validate data import and notify the user of any errors\n\n\nUser Story 2: Tax Liability Calculation\n\n\nAs the Accounting Team Lead, I want the microsaas application to calculate tax liabilities for various tax types (e.g. sales tax, income tax), so that I can ensure accurate tax calculations and reduce manual errors.\n\n\nThe application can calculate tax liabilities for at least 2 different tax types (e.g. sales tax, income tax)\n\n\nThe application can take into account various tax rates and exemptions\n\n\nThe application can provide a detailed breakdown of tax calculations\n\n\nUser Story 3: Automated Tax Calculation\n\n\nAs the Accounting Team Lead, I want the microsaas application to automatically calculate tax credits and tax deductions, so that I can reduce manual calculations and increase efficiency.\n\n\nThe application can calculate tax credits and tax deductions based on predefined rules\n\n\nThe application can take into account various tax laws and regulations\n\n\nThe application can provide a detailed breakdown of tax calculations\n\n\nUser Story 4: Efficiency and Error Reduction\n\n\nAs the Accounting Team Lead, I want the microsaas application to reduce manual errors by 30% and increase efficiency by 25%, so that I can focus on higher-value tasks and improve customer satisfaction.\n\n\nThe application can reduce manual errors by at least 30%\n\n\nThe application can increase efficiency by at least 25%\n\n\nThe application can provide real-time analytics and reporting to track progress and identify areas for improvement\n\n\nUser Story 5: Customer Satisfaction\n\n\nAs the Accounting Team Lead, I want the microsaas application to improve customer satisfaction by at least 20%, so that I can provide better service and increase customer loyalty.\n\n\nThe application can provide real-time analytics and reporting to track customer satisfaction\n\n\nThe application can identify areas for improvement and provide recommendations for increasing customer satisfaction\n\n\nThe application can provide a detailed breakdown of customer satisfaction metrics.",
+    "metadata": {
+      "label": "SCRUM-31",
+      "summary": "Based on the provided notes, I will convert them into user stories. Here are the user stories for th",
+      "source": "jira"
+    }
+  },
+  {
+    "id": "jira::SCRUM-30",
+    "text": "Title: User Can Input Required Information and Submit Successfully\n\nDescription:\nDescription\n\nRefined User Story:\n\nDescription: As a user, I want to be able to input all required information and submit it successfully, so that I can complete the task without any errors.\n\nAcceptance Criteria\n\n1. Input Required Fields\n\n\nGiven that I am a user attempting to complete a task\n\n\nWhen I access the task form\n\n\nThen I can see all required fields (e.g. name, email, phone number, etc.) and clear instructions on how to input them.\n\n\n2. Validate User Input\n\n\nGiven that I am a user attempting to complete a task\n\n\nWhen I input data into required fields\n\n\nThen the system validates the input to ensure it meets the required format (e.g. email address, phone number, etc.).\n\n\n3. Error Handling\n\n\nGiven that I am a user attempting to complete a task\n\n\nWhen I click the \"Submit\" button without inputting all required fields\n\n\nThen the system displays a clear and concise error message indicating which fields are missing or invalid.\n\n\n4. Save User Input\n\n\nGiven that I am a user attempting to complete a task\n\n\nWhen I input all required fields and click the \"Submit\" or \"Save\" button\n\n\nThen the system saves my input and allows me to proceed with the task.\n\n\n5. Field Validation Feedback\n\n\nGiven that I am a user attempting to complete a task\n\n\nWhen I input invalid data into a required field\n\n\nThen the system provides clear and concise feedback indicating the specific issue with the input (e.g. \"Invalid email address\", \"Phone number is not in the correct format\", etc.).\n\n\nINVEST Principles:\n\n\nIndependent: Each acceptance criterion is independent of the others.\n\n\nNegotiable: The acceptance criteria are clear and concise, making it easy to negotiate and agree on them.\n\n\nValuable: Each acceptance criterion adds value to the user story.\n\n\nEstimable: The acceptance criteria are specific and measurable, making it easy to estimate the effort required to complete them.\n\n\nSmall: The acceptance criteria are small and focused, making it easy to test and verify them.\n\n\nTestable: The acceptance criteria are specific and measurable, making it easy to test and verify them.\n\n\n\nAssumptions\n\nThe system has a clear and concise error message for each required field.\n\n\nThe system has a clear and concise instruction for users to input all required fields.\n\n\nThe system has a clear and concise validation for user input.\n\n\nThe system provides feedback to users when they input invalid data into a required field.",
+    "metadata": {
+      "label": "SCRUM-30",
+      "summary": "User Can Input Required Information and Submit Successfully",
+      "source": "jira"
+    }
+  },
+  {
+    "id": "jira::SCRUM-29",
+    "text": "Title: Verify User OTP\n\nDescription:\nDescription\n\nUser Story:\n\nDescription: As a user, I want to be able to input my OTP to verify my identity and proceed with the next step in the process.\n\nAcceptance Criteria\n\n1. The system accepts a numeric OTP input from the user.\n\n\n2. The system checks if the input OTP matches the OTP sent to the user's registered contact method.\n\n\n3. If the OTP is valid, the system proceeds to the next step in the process.\n\n\n4. If the OTP is invalid, the system displays an error message to the user.\n\n\n5. The system ensures that the OTP input field is secure and does not store the input value.\n\n\n\nExamples\n\nGiven that the user has registered their contact method with the system.\n\n\nWhen the user inputs a valid OTP in the OTP input field.\n\n\nThen the system should verify the OTP and proceed to the next step in the process.\n\n\nGiven that the user inputs an invalid OTP in the OTP input field.\n\n\nWhen the system checks the OTP.\n\n\nThen the system should display an error message to the user.",
+    "metadata": {
+      "summary": "Verify User OTP",
+      "source": "jira",
+      "label": "SCRUM-29"
+    }
+  },
+  {
+    "id": "jira::SCRUM-28",
+    "text": "Title: User Can Enter Code in Name Field\n\nDescription:\nDescription\n\nUser Story:\n\nDescription: As a user, I want to be able to input a code in the name field so that I can provide a unique identifier for my account.\n\nAcceptance Criteria\n\n1. The user is presented with a name field that accepts alphanumeric input.\n\n\n2. The user can enter a code (alphanumeric characters) in the name field.\n\n\n3. The system does not restrict the length of the code that can be entered in the name field.\n\n\n4. The system validates that the code entered in the name field is alphanumeric.\n\n\n5. The system does not display any error messages when the user enters a valid alphanumeric code in the name field.",
+    "metadata": {
+      "label": "SCRUM-28",
+      "summary": "User Can Enter Code in Name Field",
+      "source": "jira"
+    }
+  },
+  {
+    "id": "jira::SCRUM-27",
+    "text": "Title: Input Code\n\nDescription:\nDescription\n\nUser Story:\n\nDescription: As a developer, I want to input and manage code within the system, ensuring a seamless writing, editing, and execution experience without any issues.\n\nAcceptance Criteria\n\n1. Input Code\n\n\nThe system provides a text area or code editor for users to input code.\n\n\nThe system accepts various code formats, including plain text, HTML, CSS, JavaScript, and programming languages.\n\n\n2. Code Validation\n\n\nThe system validates user input to ensure it is a valid code and does not contain malicious scripts or code.\n\n\nThe system detects and prevents the execution of malicious code.\n\n\n3. Code Management\n\n\nThe system does not impose character limits or restrictions on the amount of code that can be input.\n\n\nThe system saves the input code for future reference and allows users to retrieve and edit it as needed.\n\n\n4. Code Assistance\n\n\nThe system provides syntax highlighting to aid in writing and editing code.\n\n\nThe system offers code completion features to enhance the coding experience.\n\n\n5. Error Handling\n\n\nThe system displays any errors or warnings related to the input code, such as syntax errors or undefined variables.\n\n\n\nAssumptions\n\nThe system is designed for developers and programmers.\n\n\nThe system is intended to support a variety of code formats and languages.\n\n\nThe system is secure and does not allow malicious code to be executed.\n\n\nPriority: High\n\n\nEstimated Effort: 10-15 hours\n\n\nDependencies: None\n\n\nRisks: None\n\n\n\nNotes\n\nThe system should be designed to handle large code inputs without performance issues.\n\n\nThe system should provide a user-friendly interface for code input and management.\n\n\nThe system should be able to support a wide range of programming languages and code formats.",
+    "metadata": {
+      "source": "jira",
+      "summary": "Input Code",
+      "label": "SCRUM-27"
+    }
+  },
+  {
+    "id": "jira::SCRUM-26",
+    "text": "Title: User can input first name and last name in the name field.\n\nDescription:\nUser Story\n\nAs a user, I want to be able to enter my first name and last name in the name field so that I can provide accurate information.\n\nDescription\n\nUser Story:\n\nDescription:\n\nAcceptance Criteria\n\n1. The user is presented with a name field that accepts both first name and last name.\n\n\n2. The user can enter a valid first name in the name field.\n\n\n3. The user can enter a valid last name in the name field.\n\n\n4. The system allows the user to enter both first name and last name in the same name field.\n\n\n5. The system does not restrict the user from entering only a first name or only a last name in the name field.\n\n\n6. The system validates the input and does not display any error message when a valid first name and last name are entered.\n\n\n\nExamples\n\nGiven that the user is on the registration page.\n\n\nWhen the user enters \"John\" as the first name and \"Doe\" as the last name in the name field.\n\n\nThen the system accepts the input and does not display any error message.",
+    "metadata": {
+      "label": "SCRUM-26",
+      "summary": "User can input first name and last name in the name field.",
+      "source": "jira"
+    }
+  },
+  {
+    "id": "jira::SCRUM-25",
+    "text": "Title: User can input code\n\nDescription:\nDescription\n\nUser Story:\n\nDescription: As a user, I want to be able to input code so that I can create, edit, or debug my code.\n\nAcceptance Criteria\n\n1. The user can enter code into a text area or input field.\n\n\n2. The user can paste code from another source (e.g. clipboard) into the input field.\n\n\n3. The input field allows for multi-line input.\n\n\n4. The input field does not have any character limits.\n\n\n5. The user can save the input code for later use.\n\n\n6. The user can retrieve previously saved code from a list or history.\n\n\n7. The input field provides basic syntax highlighting for readability.\n\n\n8. The input field provides auto-completion suggestions for common code snippets.\n\n\n\nAssumptions\n\nThe user has a basic understanding of coding concepts and syntax.\n\n\nThe user has a suitable text editor or IDE installed on their device.\n\n\nThe user has a stable internet connection (if online functionality is required).\n\n\nNon-Functional Requirements:\n\n\nThe input field should be responsive and work on various devices (desktop, tablet, mobile).\n\n\nThe input field should be accessible for users with disabilities (e.g. screen readers, keyboard-only navigation).\n\n\nThe input field should be secure and prevent code injection or other security vulnerabilities.",
+    "metadata": {
+      "label": "SCRUM-25",
+      "source": "jira",
+      "summary": "User can input code"
+    }
+  },
+  {
+    "id": "jira::SCRUM-24",
+    "text": "Title: To create a more accurate user story, I'll need more information about the notes. However, based on\n\nDescription:\nDescription\n\nTo create a more accurate user story, I'll need more information about the notes. However, based on the provided notes, here's a possible user story:\n\nDescription:\n\nAcceptance Criteria\n\nPlease provide the following information about the notes:\n\n\n1. Who is the user/actor? (e.g. Customer, Employee, Manager)\n\n\n2. What is the specific goal or outcome that the user wants to achieve?\n\n\n3. What benefits will the user gain from achieving this goal?\n\n\n4. Are there any specific requirements or constraints that need to be considered?\n\n\nOnce I have this information, I can help create a more accurate and detailed user story.\n\n\nHere's an example of how the notes could be converted into a user story:\n\n\n1. The system displays a list of all orders for each customer.\n\n\n2. The list includes the order status for each order.\n\n\n3. The order status is updated in real-time.\n\n\n4. Customers can view their order status by logging into their account.\n\n\n5. The system displays the order status in a clear and concise manner.\n\n\nPlease provide more information about the notes, and I'll be happy to help create a more accurate user story.\n\n\n\nNotes\n\nThe system needs to display a list of all orders.\n\n\nThe list should include the order status for each order.\n\n\nThe order status should be updated in real-time.\n\n\nCustomers should be able to view their order status by logging into their account.\n\n\nUser Story:\n\n\nDescription: As a Customer, I want to be able to view my order status, so that I can track my order and plan accordingly.",
+    "metadata": {
+      "label": "SCRUM-24",
+      "source": "jira",
+      "summary": "To create a more accurate user story, I'll need more information about the notes. However, based on "
+    }
+  },
+  {
+    "id": "history::20260603_181058_294288",
+    "text": "Title: Download Past Invoices as ZIP File\n\nDescription:\nAs a registered customer, I want to download past invoices as a single ZIP file, so that I can access all my past invoices quickly and easily without having to download each one separately.\n\nAcceptance Criteria:\n- Given a customer has logged in and navigated to the Invoices page, When they click the \"Download ZIP\" button, Then a ZIP file containing all past invoices is downloaded to their device within 30 seconds.\n- Given a customer has no past invoices, When they click the \"Download ZIP\" button, Then a message reads \"No past invoices found\" and the Download button is disabled.\n- Given a customer has a large number of past invoices (over 50), When they click the \"Download ZIP\" button, Then a progress bar is displayed and the ZIP file is downloaded in chunks to prevent browser crashes.\n\nTitle: Filter Invoices by Date Range\n\nDescription:\nAs a registered customer, I want to filter invoices by a specific date range, so that I can quickly find and download the invoices I need without having to manually search through all my past invoices.\n\nAcceptance Criteria:\n- Given a customer has logged in and navigated to the Invoices page, When they select a start and end date using the date picker, Then only invoices within the selected date range are displayed.\n- Given a customer selects a date range that spans multiple years, When they click the \"Apply Filter\" button, Then the invoices are sorted by date in descending order.\n- Given a customer attempts to select a date range that is invalid (e.g. start date is after end date), When they click the \"Apply Filter\" button, Then an error message reads \"Invalid date range — please try again\" and the filter form is highlighted in red.",
+    "metadata": {
+      "source": "history",
+      "mode": "RAG",
+      "label": "03 Jun 2026, 18:10"
+    }
+  },
+  {
+    "id": "history::20260603_182518_172293",
+    "text": "Title: Generate Combined Invoice ZIP File\n\nDescription:\nAs a registered customer, I want to download all past invoices as a single ZIP file, so that I can easily access and manage my historical financial records without having to download each invoice separately.\n\nAcceptance Criteria:\n- Given a customer has an active account with at least one past invoice, When they navigate to the Invoices page and click the \"Download ZIP\" button, Then a ZIP file containing all past invoices is downloaded to their local machine within 30 seconds.\n- Given a customer attempts to download a ZIP file with more than 50 invoices, When they click the \"Download ZIP\" button, Then a system message reads \"Large invoice collection detected — ZIP file may take several minutes to generate\" and the download begins in the background with progress updates displayed on the Invoices page.\n- Given a customer has an outstanding balance greater than $100.00, When they attempt to download a ZIP file, Then a banner reads \"Clear your outstanding balance to access historical invoices\" and the Download ZIP button is disabled.\n\nTitle: Filter Invoices by Date Range in ZIP File\n\nDescription:\nAs a registered customer, I want to filter invoices by a specific date range when downloading all past invoices as a single ZIP file, so that I can easily access and manage my historical financial records within a specific timeframe.\n\nAcceptance Criteria:\n- Given a customer has an active account with past invoices spanning multiple years, When they navigate to the Invoices page, select a start and end date, and click the \"Download ZIP\" button, Then a ZIP file containing only invoices within the specified date range is downloaded to their local machine within 30 seconds.\n- Given a customer attempts to download a ZIP file with a start date before the earliest available invoice and an end date after the latest available invoice, When they click the \"Download ZIP\" button, Then a system message reads \"Invalid date range — please adjust start and end dates to match available invoices\" and the Download ZIP button is disabled.\n- Given a customer has no past invoices within the specified date range, When they navigate to the Invoices page and attempt to download a ZIP file, Then a message reads \"No invoices found within the specified date range\" and the Download ZIP button is disabled.",
+    "metadata": {
+      "source": "history",
+      "label": "03 Jun 2026, 18:25",
+      "mode": "Simple"
+    }
+  },
+  {
+    "id": "history::pushed::4e7c1901906e",
+    "text": "Title: Reset Password Via Email Link\n\nDescription:\nAs a registered user, I want to reset my password via a link sent to my email, so that I can regain access to my account securely.\n\nAcceptance Criteria:\n- Given a user clicks Forgot Password, When they enter a registered email, Then a reset link is sent within 2 minutes.",
+    "metadata": {
+      "label": "Jira-pushed",
+      "source": "history",
+      "mode": "RAG"
+    }
+  }
+]

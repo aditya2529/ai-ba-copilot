@@ -9,6 +9,7 @@ Each function is independent and dedupes via store.exists().
 
 import os
 import io
+import json
 import hashlib
 from typing import List, Dict, Tuple, Optional
 
@@ -155,6 +156,43 @@ def ingest_file(filename: str, file_bytes: bytes) -> Tuple[int, Optional[str]]:
         })
     added = store.add_many(items)
     return (added, None)
+
+
+# ─── SEED (bundled corpus for cloud) ───────────────────────────────────────
+
+_SEED_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "seed_corpus.json")
+
+
+def seed_available() -> bool:
+    return os.path.exists(_SEED_PATH)
+
+
+def ingest_seed() -> int:
+    """Load the bundled seed_corpus.json into the store. Returns docs added.
+
+    Used to auto-populate the corpus on a fresh Streamlit Cloud boot (where the
+    local chroma_db doesn't exist and Jira import is blocked by IP). Dedupes via
+    store.add_many, so calling it repeatedly is safe.
+    """
+    if not os.path.exists(_SEED_PATH):
+        return 0
+    try:
+        with open(_SEED_PATH, "r", encoding="utf-8") as f:
+            seed = json.load(f)
+    except Exception:
+        return 0
+
+    items = []
+    for s in seed:
+        text = (s.get("text") or "").strip()
+        if not text:
+            continue
+        items.append({
+            "id": s.get("id"),
+            "text": text,
+            "metadata": s.get("metadata") or {},
+        })
+    return store.add_many(items)
 
 
 # ─── 3. JIRA ───────────────────────────────────────────────────────────────
