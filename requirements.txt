@@ -1,13 +1,16 @@
+# ─── Streamlit Cloud (LIGHT) requirements ───────────────────────────────
+# Deliberately excludes sentence-transformers (torch ~1GB) and mcp.
+# RAG still works: rag/embedder.py falls back to ChromaDB's built-in ONNX
+# MiniLM embedder (onnxruntime, ~80MB) when sentence-transformers is absent.
+# For the FULL local setup (PyTorch embedder + MCP server) use:
+#     pip install -r requirements-full.txt
+
 streamlit
 groq
 python-dotenv
 requests
 
-# RAG dependencies
+# RAG (light) — ChromaDB ships its own ONNX embedder; no torch needed
 chromadb
-sentence-transformers
 pypdf
 python-docx
-
-# MCP server (Phase 3 — agent integration)
-mcp

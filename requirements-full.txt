@@ -1,0 +1,17 @@
+# ─── FULL local development requirements ────────────────────────────────
+# Everything in the cloud requirements PLUS the heavy/optional pieces:
+#   • sentence-transformers — PyTorch embedder (higher-fidelity, ~1GB)
+#   • mcp                    — MCP server for agent integration (Phase 3)
+#
+# Install on your dev machine with:
+#     pip install -r requirements-full.txt
+#
+# Streamlit Cloud should keep using the lighter requirements.txt.
+
+-r requirements.txt
+
+# Full embedder backend (PyTorch). rag/embedder.py prefers this when present.
+sentence-transformers
+
+# MCP server (Phase 3 — agent integration)
+mcp

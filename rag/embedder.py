@@ -1,39 +1,64 @@
-"""Local sentence-transformers embedder.
+"""Embedding backend with automatic light/full fallback.
 
-Uses `all-MiniLM-L6-v2` — small (~80MB), fast, CPU-friendly, no API key
-required. The model is lazily loaded on first call so app cold-start
-remains fast for users who never visit the RAG page.
+Both backends use the SAME model — all-MiniLM-L6-v2 (384-dim) — so vectors are
+interchangeable. The backend is chosen automatically at runtime:
+
+  • FULL  — `sentence-transformers` (PyTorch). Best on a dev machine where torch
+            is already installed. Heavier (~1GB with torch).
+  • LIGHT — ChromaDB's built-in ONNX MiniLM embedder (onnxruntime, ~80MB, no
+            torch). Used automatically when sentence-transformers isn't
+            installed — ideal for Streamlit Cloud's 1GB memory limit.
+
+Local machine: keep sentence-transformers installed → FULL backend.
+Cloud: omit sentence-transformers from requirements → LIGHT backend.
+The embeddings are equivalent either way.
 """
 
 from typing import List
 
-_model = None
-_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
+_backend = None  # tuple: (kind, callable-or-model)
+_DIM = 384
 
 
-def _get_model():
-    """Load the model on first use; cache for subsequent calls."""
-    global _model
-    if _model is None:
-        from sentence_transformers import SentenceTransformer
-        _model = SentenceTransformer(_MODEL_NAME)
-    return _model
+def _get_backend():
+    """Resolve the embedding backend once, preferring the full (torch) one."""
+    global _backend
+    if _backend is None:
+        try:
+            # FULL backend — sentence-transformers (PyTorch)
+            from sentence_transformers import SentenceTransformer
+            model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+            _backend = ("st", model)
+        except Exception:
+            # LIGHT backend — ChromaDB's ONNX MiniLM (no torch)
+            from chromadb.utils import embedding_functions
+            ef = embedding_functions.ONNXMiniLM_L6_V2()
+            _backend = ("onnx", ef)
+    return _backend
+
+
+def backend_name() -> str:
+    """Return which backend is active: 'sentence-transformers' or 'onnx'."""
+    kind, _ = _get_backend()
+    return "sentence-transformers" if kind == "st" else "onnx"
 
 
 def embed(text: str) -> List[float]:
-    """Convert a single string into a vector."""
+    """Convert a single string into a 384-dim vector."""
     if not text or not text.strip():
-        # Return a zero vector matching model dimension (384 for MiniLM-L6).
-        return [0.0] * 384
-    model = _get_model()
-    vector = model.encode(text, normalize_embeddings=True)
-    return vector.tolist()
+        return [0.0] * _DIM
+    kind, m = _get_backend()
+    if kind == "st":
+        return m.encode(text, normalize_embeddings=True).tolist()
+    # ONNX embedding function takes a list, returns a list of vectors
+    return list(m([text])[0])
 
 
 def embed_batch(texts: List[str]) -> List[List[float]]:
-    """Convert many strings into vectors in one pass (faster than looping)."""
+    """Convert many strings into vectors in one pass."""
     if not texts:
         return []
-    model = _get_model()
-    vectors = model.encode(texts, normalize_embeddings=True)
-    return vectors.tolist()
+    kind, m = _get_backend()
+    if kind == "st":
+        return m.encode(texts, normalize_embeddings=True).tolist()
+    return [list(v) for v in m(texts)]
