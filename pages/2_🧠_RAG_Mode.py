@@ -202,11 +202,18 @@ with st.expander("⚙️ Manage Corpus (add sources)", expanded=(counts is not N
         max_n = st.number_input("Max issues to import (0 = all)", min_value=0, value=0, step=10, key="rag_jira_max")
         if st.button("🎫 Pull past stories from Jira", key="rag_ingest_jira"):
             with st.spinner("Fetching from Jira..."):
-                added, err = rag_ingest.ingest_jira(max_results=(max_n or None))
+                added, fetched, err = rag_ingest.ingest_jira(max_results=(max_n or None))
             if err:
                 st.error(f"Failed: {err}")
+            elif fetched == 0:
+                st.warning(
+                    "Jira returned 0 stories. The request succeeded but found nothing — "
+                    "usually means the configured Jira account can't see the project's "
+                    "stories. Check JIRA_EMAIL / JIRA_API_TOKEN in Streamlit Cloud secrets "
+                    "match your real Jira account, and that project 'SCRUM' has Story-type issues."
+                )
             else:
-                st.session_state.rag_flash = f"✅ Indexed {added} new Jira stories."
+                st.session_state.rag_flash = f"✅ Fetched {fetched} from Jira, indexed {added} new."
                 st.rerun()
 
 

@@ -159,14 +159,20 @@ def ingest_file(filename: str, file_bytes: bytes) -> Tuple[int, Optional[str]]:
 
 # ─── 3. JIRA ───────────────────────────────────────────────────────────────
 
-def ingest_jira(max_results: Optional[int] = None) -> Tuple[int, Optional[str]]:
-    """Pull past stories from Jira and index them. Returns (count_added, error_or_None)."""
+def ingest_jira(max_results: Optional[int] = None) -> Tuple[int, int, Optional[str]]:
+    """Pull past stories from Jira and index them.
+
+    Returns (count_added, count_fetched, error_or_None) so the caller can tell
+    whether a 0 means 'Jira returned nothing' (fetched=0 → auth/permission) vs
+    'all already indexed' (fetched>0, added=0 → dedupe).
+    """
     try:
         from rag.jira_importer import fetch_stories
         stories = fetch_stories(max_results=max_results)
     except Exception as e:
-        return (0, str(e))
+        return (0, 0, str(e))
 
+    fetched = len(stories)
     items = []
     for s in stories:
         normalised = (s.get("normalised_text") or "").strip()
@@ -182,4 +188,4 @@ def ingest_jira(max_results: Optional[int] = None) -> Tuple[int, Optional[str]]:
             },
         })
     added = store.add_many(items)
-    return (added, None)
+    return (added, fetched, None)
