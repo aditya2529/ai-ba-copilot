@@ -34,6 +34,48 @@ def _get_auth():
     return HTTPBasicAuth(email, token)
 
 
+def whoami() -> Dict:
+    """Diagnostic: report which Jira account the current credentials authenticate
+    as, and whether the SCRUM project is visible.
+
+    Returns a dict with: ok, email, account, project_visible, detail.
+    """
+    try:
+        auth = _get_auth()
+    except Exception as e:
+        return {"ok": False, "detail": f"No credentials: {e}"}
+
+    headers = {"Accept": "application/json"}
+    out = {"ok": False, "email": None, "account": None, "project_visible": False, "detail": ""}
+
+    # 1. Who am I?
+    try:
+        r = requests.get(f"{JIRA_URL}/rest/api/3/myself", headers=headers, auth=auth, timeout=20)
+        if r.status_code != 200:
+            out["detail"] = f"/myself returned {r.status_code}: {r.text[:150]}"
+            return out
+        me = r.json()
+        out["email"] = me.get("emailAddress")
+        out["account"] = me.get("displayName")
+    except Exception as e:
+        out["detail"] = f"/myself error: {e}"
+        return out
+
+    # 2. Can I see the SCRUM project?
+    try:
+        pr = requests.get(f"{JIRA_URL}/rest/api/3/project/{PROJECT_KEY}", headers=headers, auth=auth, timeout=20)
+        out["project_visible"] = (pr.status_code == 200)
+        if pr.status_code == 200:
+            out["ok"] = True
+            out["detail"] = f"Authenticated and can see project {PROJECT_KEY}."
+        else:
+            out["detail"] = f"Authenticated as above, but project {PROJECT_KEY} returned {pr.status_code} (no access / wrong project)."
+    except Exception as e:
+        out["detail"] = f"project check error: {e}"
+
+    return out
+
+
 def _adf_to_text(node) -> str:
     """Flatten an Atlassian Document Format node tree into plain text."""
     if node is None:

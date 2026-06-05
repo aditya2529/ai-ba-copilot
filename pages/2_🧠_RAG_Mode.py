@@ -217,6 +217,15 @@ with st.expander("⚙️ Manage Corpus (add sources)", expanded=(counts is not N
 
     with tab_j:
         st.caption("Pulls every Story-type issue from your configured Jira project.")
+
+        if st.button("🔌 Test Jira Connection", key="rag_jira_test"):
+            with st.spinner("Checking which Jira account is connected..."):
+                from rag.jira_importer import whoami
+                info = whoami()
+            st.write(f"**Authenticated as:** {info.get('email') or '—'}  ({info.get('account') or '—'})")
+            st.write(f"**SCRUM project visible:** {'✅ Yes' if info.get('project_visible') else '❌ No'}")
+            (st.success if info.get("ok") else st.error)(info.get("detail", ""))
+
         max_n = st.number_input("Max issues to import (0 = all)", min_value=0, value=0, step=10, key="rag_jira_max")
         if st.button("🎫 Pull past stories from Jira", key="rag_ingest_jira"):
             with st.spinner("Fetching from Jira..."):
