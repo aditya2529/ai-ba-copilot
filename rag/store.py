@@ -44,6 +44,23 @@ def exists(doc_id: str) -> bool:
         return False
 
 
+def _clean_metadata(metadata: Optional[Dict]) -> Dict:
+    """ChromaDB only accepts str/int/float/bool metadata values (no None, no
+    lists/dicts). Coerce everything else to str and drop None. Never empty —
+    Chroma also dislikes empty metadata dicts on some versions."""
+    out = {}
+    for k, v in (metadata or {}).items():
+        if v is None:
+            continue
+        if isinstance(v, (str, int, float, bool)):
+            out[str(k)] = v
+        else:
+            out[str(k)] = str(v)
+    if not out:
+        out["source"] = "other"
+    return out
+
+
 def add(doc_id: str, text: str, metadata: Optional[Dict] = None) -> bool:
     """Add a single document. Returns True if added, False if skipped (already exists or empty)."""
     if not text or not text.strip():
@@ -56,7 +73,7 @@ def add(doc_id: str, text: str, metadata: Optional[Dict] = None) -> bool:
         ids=[doc_id],
         embeddings=[vector],
         documents=[text],
-        metadatas=[metadata or {}],
+        metadatas=[_clean_metadata(metadata)],
     )
     return True
 
@@ -81,7 +98,7 @@ def add_many(items: List[Dict]) -> int:
         ids=[it["id"] for it in fresh],
         embeddings=vectors,
         documents=texts,
-        metadatas=[it.get("metadata") or {} for it in fresh],
+        metadatas=[_clean_metadata(it.get("metadata")) for it in fresh],
     )
     return len(fresh)
 

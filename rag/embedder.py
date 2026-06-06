@@ -44,21 +44,22 @@ def backend_name() -> str:
 
 
 def embed(text: str) -> List[float]:
-    """Convert a single string into a 384-dim vector."""
+    """Convert a single string into a 384-dim vector of plain Python floats."""
     if not text or not text.strip():
         return [0.0] * _DIM
     kind, m = _get_backend()
     if kind == "st":
         return m.encode(text, normalize_embeddings=True).tolist()
-    # ONNX embedding function takes a list, returns a list of vectors
-    return list(m([text])[0])
+    # ONNX embedding function takes a list, returns a list of vectors.
+    # Force plain Python floats — ChromaDB rejects numpy float32 on add().
+    return [float(x) for x in m([text])[0]]
 
 
 def embed_batch(texts: List[str]) -> List[List[float]]:
-    """Convert many strings into vectors in one pass."""
+    """Convert many strings into vectors of plain Python floats in one pass."""
     if not texts:
         return []
     kind, m = _get_backend()
     if kind == "st":
         return m.encode(texts, normalize_embeddings=True).tolist()
-    return [list(v) for v in m(texts)]
+    return [[float(x) for x in v] for v in m(texts)]
