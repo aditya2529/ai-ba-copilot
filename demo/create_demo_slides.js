@@ -132,4 +132,4 @@ function baseDark(s,idx){ s.background={color:NAVY}; dots(s,idx);}
   s.addText("ai-ba-copilot.streamlit.app",{x:0.9,y:6.6,w:8,h:0.4,fontSize:14,color:"7FB3D5",italic:true,fontFace:"Calibri"});
 }
 
-pptx.writeFile({fileName:"C:/Users/adity/Desktop/AI_BA_Copilot_Demo_Slides.pptx"}).then(()=>console.log("Slides done."));
+pptx.writeFile({fileName:"D:/Projects/ai-ba-copilot/AI_BA_Copilot_Demo_Slides.pptx"}).then(()=>console.log("Slides done."));

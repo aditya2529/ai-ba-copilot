@@ -178,4 +178,4 @@ const doc=new Document({
   }]
 });
 
-Packer.toBuffer(doc).then(b=>{fs.writeFileSync("C:\\Users\\adity\\Desktop\\AI_BA_Copilot_Demo_Playbook.docx",b);console.log("Playbook done.");});
+Packer.toBuffer(doc).then(b=>{fs.writeFileSync("D:\\Projects\\ai-ba-copilot\\AI_BA_Copilot_Demo_Playbook.docx",b);console.log("Playbook done.");});
